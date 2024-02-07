@@ -1,8 +1,10 @@
-package com.example.easymeal;
+package com.example.easymeal.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.easymeal.R;
 
 public class MainActivity extends AppCompatActivity {
 
