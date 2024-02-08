@@ -9,7 +9,7 @@
 
    <androidx.fragment.app.FragmentContainerView
        android:id="@+id/fragmentContainerView"
-       android:name="com.example.easymeal.home.view.HomeFragment"
+       android:name="com.example.easymeal.ui.fragments.LoginFragment"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
        tools:layout_editor_absoluteX="148dp"

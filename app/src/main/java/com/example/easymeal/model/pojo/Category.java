@@ -1,52 +1,58 @@
 package com.example.easymeal.model.pojo;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Category {
-    private String idCategory;
-    private String strCategory;
-    private String strCategoryThumb;
-    private String strCategoryDescription;
+    @SerializedName("idCategory")
+    private String categoryId;
+    @SerializedName("strCategory")
+    private String categoryName;
+    @SerializedName("strCategoryThumb")
+    private String categoryThumb;
+    @SerializedName("strCategoryDescription")
+    private String categoryDescription;
 
-    public Category(String idCategory, String strCategory, String strCategoryThumb, String strCategoryDescription) {
-        this.idCategory = idCategory;
-        this.strCategory = strCategory;
-        this.strCategoryThumb = strCategoryThumb;
-        this.strCategoryDescription = strCategoryDescription;
+    public Category(String categoryId, String categoryName, String categoryThumb, String categoryDescription) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.categoryThumb = categoryThumb;
+        this.categoryDescription = categoryDescription;
     }
 
-    public String getIdCategory() {
-        return idCategory;
+    public String getCategoryId() {
+        return categoryId;
     }
 
-    public void setIdCategory(String idCategory) {
-        this.idCategory = idCategory;
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public String getStrCategory() {
-        return strCategory;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setStrCategory(String strCategory) {
-        this.strCategory = strCategory;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
-    public String getStrCategoryThumb() {
-        return strCategoryThumb;
+    public String getCategoryThumb() {
+        return categoryThumb;
     }
 
-    public void setStrCategoryThumb(String strCategoryThumb) {
-        this.strCategoryThumb = strCategoryThumb;
+    public void setCategoryThumb(String categoryThumb) {
+        this.categoryThumb = categoryThumb;
     }
 
-    public String getStrCategoryDescription() {
-        return strCategoryDescription;
+    public String getCategoryDescription() {
+        return categoryDescription;
     }
 
-    public void setStrCategoryDescription(String strCategoryDescription) {
-        this.strCategoryDescription = strCategoryDescription;
+    public void setCategoryDescription(String categoryDescription) {
+        this.categoryDescription = categoryDescription;
     }
 
     @Override
     public String toString() {
-        return String.format("Category ID: %s\nCategory Name: %s\nDescription: %s\n", idCategory, strCategory, strCategoryDescription);
+        return String.format("Category ID: %s\nCategory Name: %s\nDescription: %s\n", categoryId, categoryName, categoryDescription);
     }
 }

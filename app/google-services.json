@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "291040840405",
+    "project_id": "easy-meal-2ebd9",
+    "storage_bucket": "easy-meal-2ebd9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291040840405:android:a17753606462f151ebb05c",
+        "android_client_info": {
+          "package_name": "com.example.easymeal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMlMN-kwRWA-IqDYuiMp14l4_Fu3cN1yA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

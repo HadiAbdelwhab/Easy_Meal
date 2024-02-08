@@ -5,4 +5,6 @@
     <string name="easy_meal_text_view">Easy Meal</string>
     <string name="login_button">Login</string>
     <string name="new_creative_meal_everyday_text_view">New Creative meal everyday</string>
+    <string name="email_text_view">Email</string>
+    <string name="password_text_view">Password\n</string>
 </resources>
