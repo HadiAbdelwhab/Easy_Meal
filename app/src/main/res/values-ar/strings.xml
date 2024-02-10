@@ -1,8 +1,18 @@
 <resources>
-    <string name="app_name">EasyMeal</string>
+    <string name="app_name">Easy Meal</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="easy_meal_text_view">Easy Meal</string>
     <string name="login_button">Login</string>
     <string name="new_creative_meal_everyday_text_view">New Creative meal everyday</string>
+    <string name="email_text_view">Email</string>
+    <string name="password_text_view">Password\n</string>
+    <string name="google_sign_in">Sign with Google</string>
+    <string name="do_not_have_an_account_textview">Don\'t have an account?</string>
+    <string name="register_textview">Register\n</string>
+    <string name="home_text_view">Home</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_text_view">Search</string>
+    <string name="plan_text_view">Plan\n</string>
+    <string name="profile_text_view">Profile</string>
 </resources>
