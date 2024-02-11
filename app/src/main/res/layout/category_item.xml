@@ -13,8 +13,8 @@
 
         <ImageView
             android:id="@+id/category_image_view"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
         <TextView
@@ -22,7 +22,7 @@
             app:layout_constraintStart_toStartOf="@+id/category_image_view"
             app:layout_constraintEnd_toEndOf="@+id/category_image_view"
             tools:text="Category"
-            android:textSize="25dp"
+            android:textSize="20sp"
             android:id="@+id/category_name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

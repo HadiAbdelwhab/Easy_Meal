@@ -9,6 +9,10 @@
         android:icon="@drawable/search"
         android:title="@string/search_text_view" />
     <item
+        android:id="@+id/favouriteFragment"
+        android:icon="@drawable/baseline_favorite_border"
+        android:title="@string/favourite_text_view"/>
+    <item
         android:id="@+id/planFragment"
         android:icon="@drawable/planning"
         android:title="@string/plan_text_view" />

@@ -7,28 +7,33 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.easymeal.home.view.HomeFragment"
+        android:name="com.example.easymeal.app_features.home.view.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/mealDetailsFragment"
-        android:name="com.example.easymeal.meal_details.view.MealDetailsFragment"
+        android:name="com.example.easymeal.app_features.meal_details.view.MealDetailsFragment"
         android:label="fragment_meal_details"
         tools:layout="@layout/fragment_meal_details" >
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.easymeal.search.view.SearchFragment"
+        android:name="com.example.easymeal.app_features.search.view.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.easymeal.profile.view.ProfileFragment"
+        android:name="com.example.easymeal.app_features.profile.view.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/planFragment"
-        android:name="com.example.easymeal.plan.view.PlanFragment"
+        android:name="com.example.easymeal.app_features.plan.view.PlanFragment"
         android:label="fragment_plan"
         tools:layout="@layout/fragment_plan" />
+    <fragment
+        android:id="@+id/favouriteFragment"
+        android:name="com.example.easymeal.app_features.favourite.view.FavouriteFragment"
+        android:label="fragment_favourite"
+        tools:layout="@layout/fragment_favourite" />
 </navigation>

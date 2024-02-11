@@ -15,4 +15,8 @@
     <string name="search_text_view">Search</string>
     <string name="plan_text_view">Plan\n</string>
     <string name="profile_text_view">Profile</string>
+    <string name="favourite_text_view">Favourite</string>
+    <string name="join_us_now">Join us now</string>
+    <string name="name_text_view">Name</string>
+    <string name="register_button">Register</string>
 </resources>

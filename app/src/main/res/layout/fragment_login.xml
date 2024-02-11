@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".login.view.LoginFragment">
+    tools:context=".auth.login.view.LoginFragment">
 
     <ImageView
         android:id="@+id/icon_image_view"
@@ -24,7 +24,6 @@
         android:text="@string/easy_meal_text_view"
         android:textAlignment="center"
         android:textSize="25dp"
-
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/icon_image_view" />
@@ -41,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/title_text_view" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/email_text_field"
+        android:id="@+id/email_text_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
@@ -55,13 +54,24 @@
         app:startIconDrawable="@drawable/email">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email_text_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <ProgressBar
+        android:id="@+id/register_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/password_text_field"
+        android:id="@+id/password_text_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
@@ -71,11 +81,12 @@
         app:boxStrokeColor="@color/primary_color"
         app:endIconMode="password_toggle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_text_field"
+        app:layout_constraintTop_toBottomOf="@+id/email_text_input_layout"
         app:startIconContentDescription="password"
         app:startIconDrawable="@drawable/lock">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_text_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword" />
@@ -91,7 +102,7 @@
         android:layout_marginEnd="70dp"
         android:text="@string/login_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_text_field" />
+        app:layout_constraintTop_toBottomOf="@+id/password_text_input_layout" />
 
 
     <com.google.android.gms.common.SignInButton
@@ -123,16 +134,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="144dp"
         android:clickable="true"
-        android:layout_marginTop="24dp"
         android:focusable="true"
         android:minHeight="48dp"
         android:text="@string/register_textview"
         android:textColor="@color/primary_color"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/login_google_button"
         app:layout_constraintHorizontal_bias="0.267"
-        app:layout_constraintStart_toEndOf="@+id/doNotHaveAnAccount_text_view" />
+        app:layout_constraintStart_toEndOf="@+id/doNotHaveAnAccount_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/login_google_button" />
 </androidx.constraintlayout.widget.ConstraintLayout>
