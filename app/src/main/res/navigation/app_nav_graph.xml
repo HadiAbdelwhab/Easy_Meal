@@ -57,9 +57,14 @@
         tools:layout="@layout/fragment_favourite" >
         <argument
             android:name="categoryName"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true"/>
         <action
             android:id="@+id/action_mealsFragment_to_mealDetailsFragment"
             app:destination="@id/mealDetailsFragment" />
+        <argument
+            android:name="countryName"
+            app:argType="string"
+            app:nullable="true"/>
     </fragment>
 </navigation>

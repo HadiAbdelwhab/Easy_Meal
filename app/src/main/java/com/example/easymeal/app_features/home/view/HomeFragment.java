@@ -23,6 +23,7 @@ import com.example.easymeal.app_features.home.presenter.HomePresenterImpl;
 import com.example.easymeal.app_features.home.view.adapters.CategoriesAdapter;
 import com.example.easymeal.app_features.home.view.adapters.CountriesAdapter;
 import com.example.easymeal.R;
+import com.example.easymeal.app_features.home.view.adapters.OnChosenAreaListener;
 import com.example.easymeal.app_features.home.view.adapters.OnChosenCategoryClickListener;
 import com.example.easymeal.app_features.meal_details.view.MealDetailsFragment;
 import com.example.easymeal.model.pojo.AreaListResponse;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class HomeFragment extends Fragment implements HomeView, OnChosenCategoryClickListener {
+public class HomeFragment extends Fragment implements HomeView, OnChosenCategoryClickListener, OnChosenAreaListener {
 
     private CountriesAdapter countriesAdapter;
     private CategoriesAdapter categoriesAdapter;
@@ -111,7 +112,7 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
         populatedAreas.add(new AreaListResponse.Area("Turkish", R.drawable.turkish));
         populatedAreas.add(new AreaListResponse.Area("Unknown", R.drawable.unknown));
         populatedAreas.add(new AreaListResponse.Area("Vietnamese", R.drawable.vietnamese));
-        countriesAdapter = new CountriesAdapter(getActivity(), populatedAreas);
+        countriesAdapter = new CountriesAdapter(getActivity(), populatedAreas, this);
         countriesRecyclerView.setAdapter(countriesAdapter);
     }
 
@@ -172,9 +173,16 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
 
 
     @Override
-    public void onClickListener(String categoryName, View view) {
+    public void onCategoryClick(String categoryName, View view) {
         HomeFragmentDirections.ActionHomeFragmentToMealsFragment toMealsFragment =
-                HomeFragmentDirections.actionHomeFragmentToMealsFragment(categoryName);
+                HomeFragmentDirections.actionHomeFragmentToMealsFragment(categoryName,null);
+        Navigation.findNavController(view).navigate(toMealsFragment);
+    }
+
+    @Override
+    public void onAreaClick(String countryName, View view) {
+        HomeFragmentDirections.ActionHomeFragmentToMealsFragment toMealsFragment =
+                HomeFragmentDirections.actionHomeFragmentToMealsFragment(null,countryName);
         Navigation.findNavController(view).navigate(toMealsFragment);
     }
 }

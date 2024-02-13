@@ -11,13 +11,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.easymeal.R;
-import com.example.easymeal.app_features.home.view.HomeFragmentDirections;
 import com.example.easymeal.model.pojo.Category;
 
 import java.util.List;
@@ -56,7 +54,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "onClick: "+categoryList.get(position).getCategoryId());
-                listener.onClickListener(categoryList.get(position).getCategoryName(), v);
+                listener.onCategoryClick(categoryList.get(position).getCategoryName(), v);
 
             }
         });

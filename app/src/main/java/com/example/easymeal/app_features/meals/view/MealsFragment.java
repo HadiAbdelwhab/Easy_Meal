@@ -36,6 +36,8 @@ public class MealsFragment extends Fragment implements MealsView, OnChosenMealLi
     private RecyclerView mealRecyclerView;
     private List<Meal> meals;
     private String categoryName;
+    private String countryName;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,14 +48,19 @@ public class MealsFragment extends Fragment implements MealsView, OnChosenMealLi
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         mealRecyclerView = view.findViewById(R.id.meals_recycler_view);
-        categoryName=MealsFragmentArgs.fromBundle(getArguments()).getCategoryName();
-        Log.i(TAG, "onViewCreated: "+categoryName);
+        categoryName = MealsFragmentArgs.fromBundle(getArguments()).getCategoryName();
+        countryName = MealsFragmentArgs.fromBundle(getArguments()).getCountryName();
+        Log.i(TAG, "onViewCreated: " + categoryName);
         presenter = new MealsPresenterImpl(this,
                 MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity())));
+
+        presenter.getMealsByArea(countryName);
         presenter.getMealsByCategory(categoryName);
+
         //presenter.getMealsByArea("Egyptian");
-       // presenter.getMealsByCategory("Pasta");
+        // presenter.getMealsByCategory("Pasta");
     }
 
     public void setAdapter() {
@@ -71,11 +78,10 @@ public class MealsFragment extends Fragment implements MealsView, OnChosenMealLi
             Log.i(TAG, "showMealsByCategory: " + meals.toString());
 
             setAdapter();
-            adapter = new MealsAdapter(getActivity(), meals,this);
+            adapter = new MealsAdapter(getActivity(), meals, this);
             mealRecyclerView.setAdapter(adapter);
         } else {
             Log.e(TAG, "showMealsByCategory: MealsResponse or meals list is null");
-            // Handle the case when mealsResponse or meals list is null
         }
     }
 
@@ -86,7 +92,16 @@ public class MealsFragment extends Fragment implements MealsView, OnChosenMealLi
 
     @Override
     public void showMealsByArea(MealsResponse mealsResponse) {
-        Log.i(TAG, "showMealsByArea: " + mealsResponse);
+        if (mealsResponse != null && mealsResponse.getMeals() != null) {
+            meals = mealsResponse.getMeals();
+            Log.i(TAG, "showMealsByArea: " + meals.toString());
+
+            setAdapter();
+            adapter = new MealsAdapter(getActivity(), meals, this);
+            mealRecyclerView.setAdapter(adapter);
+        } else {
+            Log.e(TAG, "showMealsByArea: MealsResponse or meals list is null");
+        }
 
     }
 
@@ -98,7 +113,7 @@ public class MealsFragment extends Fragment implements MealsView, OnChosenMealLi
 
     @Override
     public void OnClick(String mealId, View view) {
-        MealsFragmentDirections.ActionMealsFragmentToMealDetailsFragment toMealDetailsFragment=
+        MealsFragmentDirections.ActionMealsFragmentToMealDetailsFragment toMealDetailsFragment =
                 MealsFragmentDirections.actionMealsFragmentToMealDetailsFragment(mealId);
         Navigation.findNavController(view).navigate(toMealDetailsFragment);
 

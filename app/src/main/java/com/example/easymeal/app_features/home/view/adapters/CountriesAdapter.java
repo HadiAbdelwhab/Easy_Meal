@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.easymeal.R;
@@ -18,11 +19,12 @@ import java.util.List;
 public class CountriesAdapter extends RecyclerView.Adapter<CountriesAdapter.ViewHolder> {
     private Context context;
     private List<AreaListResponse.Area> areaList;
-    //private OnSavedClickListener listener;
+    private OnChosenAreaListener listener;
 
-    public CountriesAdapter(Context context, List<AreaListResponse.Area> areaList) {
+    public CountriesAdapter(Context context, List<AreaListResponse.Area> areaList, OnChosenAreaListener listener) {
         this.context = context;
         this.areaList = areaList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -40,7 +42,12 @@ public class CountriesAdapter extends RecyclerView.Adapter<CountriesAdapter.View
 
         holder.countryTextView.setText(areaList.get(position).getArea());
         holder.countryImageView.setImageResource(areaList.get(position).getImageResourceId());
-
+        holder.countryCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onAreaClick(areaList.get(position).getArea(), v);
+            }
+        });
     }
 
     @Override
@@ -51,12 +58,13 @@ public class CountriesAdapter extends RecyclerView.Adapter<CountriesAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView countryImageView;
         private TextView countryTextView;
+        private CardView countryCardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             countryImageView = itemView.findViewById(R.id.area_image_view);
             countryTextView = itemView.findViewById(R.id.area_text_view);
-
+            countryCardView = itemView.findViewById(R.id.area_card_view);
         }
     }
 }
