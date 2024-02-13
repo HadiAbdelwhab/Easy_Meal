@@ -7,16 +7,18 @@ import com.example.easymeal.network.NetworkCallBack;
 public class MealsRepositoryImpl implements MealsRepository {
 
     private static MealsRepositoryImpl repository = null;
-    private MealsRemoteDataSource remoteDataSource;
+    private final MealsRemoteDataSource remoteDataSource;
 
     private MealsRepositoryImpl(MealsRemoteDataSource remoteDataSource) {
         this.remoteDataSource = remoteDataSource;
     }
+
     public static MealsRepositoryImpl getInstance(MealsRemoteDataSourceImpl remoteDataSource) {
         if (repository == null)
             repository = new MealsRepositoryImpl(remoteDataSource);
         return repository;
     }
+
 
 
     @Override
@@ -33,5 +35,23 @@ public class MealsRepositoryImpl implements MealsRepository {
     @Override
     public void getAllAreas(NetworkCallBack.AreasCallBack areasCallBack) {
         remoteDataSource.getAllAreas(areasCallBack);
+    }
+
+    @Override
+    public void getRandomMeal(NetworkCallBack.RandomMealCallBack randomMealCallBack) {
+        remoteDataSource.getRandomMeal(randomMealCallBack);
+    }
+
+    @Override
+    public void getMealsByCategory(NetworkCallBack.MealsByCategoryCallBack mealsByCategoryCallBack,
+                                   String categoryName) {
+        remoteDataSource.getMealsByCategory(mealsByCategoryCallBack, categoryName);
+    }
+
+    @Override
+    public void getMealsByArea(NetworkCallBack.MealsByAreaCallBack mealsByAreaCallBack,
+                               String areaName) {
+
+        remoteDataSource.getMealsByArea(mealsByAreaCallBack, areaName);
     }
 }

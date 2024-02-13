@@ -49,6 +49,12 @@ public class MealDetailsResponse {
 
         @SerializedName("strIngredient2")
         private String ingredient2;
+        @SerializedName("strIngredient3")
+        private String ingredient3;
+        @SerializedName("strIngredient4")
+        private String ingredient4;
+        @SerializedName("strIngredient5")
+        private String ingredient5;
 
         // Continue defining the rest of the ingredients and measures...
 
@@ -105,6 +111,30 @@ public class MealDetailsResponse {
         }
 
         // Continue adding getters for the rest of the ingredients and measures...
+
+        public String getIngredient3() {
+            return ingredient3;
+        }
+
+        public void setIngredient3(String ingredient3) {
+            this.ingredient3 = ingredient3;
+        }
+
+        public String getIngredient4() {
+            return ingredient4;
+        }
+
+        public void setIngredient4(String ingredient4) {
+            this.ingredient4 = ingredient4;
+        }
+
+        public String getIngredient5() {
+            return ingredient5;
+        }
+
+        public void setIngredient5(String ingredient5) {
+            this.ingredient5 = ingredient5;
+        }
 
         public String getStrSource() {
             return strSource;

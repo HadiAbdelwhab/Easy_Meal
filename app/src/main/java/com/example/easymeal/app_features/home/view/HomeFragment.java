@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,15 +14,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.easymeal.app_features.home.presenter.HomePresenter;
 import com.example.easymeal.app_features.home.presenter.HomePresenterImpl;
 import com.example.easymeal.app_features.home.view.adapters.CategoriesAdapter;
 import com.example.easymeal.app_features.home.view.adapters.CountriesAdapter;
 import com.example.easymeal.R;
+import com.example.easymeal.app_features.home.view.adapters.OnChosenCategoryClickListener;
+import com.example.easymeal.app_features.meal_details.view.MealDetailsFragment;
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.Category;
 import com.example.easymeal.model.pojo.CategoryResponse;
+import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.network.MealsRemoteDataSourceImpl;
 
@@ -28,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class HomeFragment extends Fragment implements HomeView {
+public class HomeFragment extends Fragment implements HomeView, OnChosenCategoryClickListener {
 
     private CountriesAdapter countriesAdapter;
     private CategoriesAdapter categoriesAdapter;
@@ -36,6 +44,8 @@ public class HomeFragment extends Fragment implements HomeView {
     private static final String TAG = "HomeFragment";
     private List<Category> categories;
     private HomePresenter presenter;
+    private ImageView randomMealImage;
+    private TextView mealNameTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,13 +58,15 @@ public class HomeFragment extends Fragment implements HomeView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         countriesRecyclerView = view.findViewById(R.id.countries_recycler_view);
-        categoriesRecyclerView=view.findViewById(R.id.categories_recycler_view);
-
+        categoriesRecyclerView = view.findViewById(R.id.categories_recycler_view);
+        randomMealImage = view.findViewById(R.id.random_image_view_home);
+        mealNameTextView = view.findViewById(R.id.meal_name_text_view_home);
         setUi();
         presenter = new HomePresenterImpl(this,
                 MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity())));
         presenter.getAllCategories();
         presenter.getAllAreas();
+        presenter.getRandomMeal();
 
     }
 
@@ -65,7 +77,7 @@ public class HomeFragment extends Fragment implements HomeView {
         countriesRecyclerView.setLayoutManager(countriesLayoutManager);
 
         categoriesRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager categoriesLayoutManger=new LinearLayoutManager(getActivity());
+        LinearLayoutManager categoriesLayoutManger = new LinearLayoutManager(getActivity());
         categoriesLayoutManger.setOrientation(RecyclerView.HORIZONTAL);
         categoriesRecyclerView.setLayoutManager(categoriesLayoutManger);
 
@@ -99,15 +111,15 @@ public class HomeFragment extends Fragment implements HomeView {
         populatedAreas.add(new AreaListResponse.Area("Turkish", R.drawable.turkish));
         populatedAreas.add(new AreaListResponse.Area("Unknown", R.drawable.unknown));
         populatedAreas.add(new AreaListResponse.Area("Vietnamese", R.drawable.vietnamese));
-        countriesAdapter =new CountriesAdapter(getActivity(),populatedAreas);
+        countriesAdapter = new CountriesAdapter(getActivity(), populatedAreas);
         countriesRecyclerView.setAdapter(countriesAdapter);
     }
 
     @Override
     public void showCategories(CategoryResponse categoryResponse) {
         categories = categoryResponse.getCategories();
-        Log.i(TAG, "showCategories: "+categories);
-        categoriesAdapter=new CategoriesAdapter(getActivity(),categories);
+        //Log.i(TAG, "showCategories: "+categories);
+        categoriesAdapter = new CategoriesAdapter(getActivity(), categories, this);
         categoriesRecyclerView.setAdapter(categoriesAdapter);
     }
 
@@ -127,6 +139,42 @@ public class HomeFragment extends Fragment implements HomeView {
 
     @Override
     public void showAreasErrorMessage(String errorMessage) {
-        Log.i(TAG, "showAreasErrorMessage: " + errorMessage);
+        //Log.i(TAG, "showAreasErrorMessage: " + errorMessage);
+    }
+
+    @Override
+    public void showRandomMeal(MealDetailsResponse mealDetails) {
+        MealDetailsResponse.MealDetails randomMeal = mealDetails.getMeals().get(0);
+        Glide.with(getActivity())
+                .load(randomMeal.getMealThumb())
+                .error(R.drawable.laod)
+                .into(randomMealImage);
+        mealNameTextView.setText(randomMeal.getMealName());
+        Log.i(TAG, "showRandomMeal: " + randomMeal.toString());
+        randomMealImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
+                        HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(randomMeal.getIdMeal());
+                action.setMealId(randomMeal.getIdMeal());
+                Navigation.findNavController(v).navigate(action);
+
+            }
+        });
+    }
+
+    @Override
+    public void showRandomMealErrorMessage(String errorMessage) {
+
+        Log.i(TAG, "showRandomMealErrorMessage: " + errorMessage);
+    }
+
+
+    @Override
+    public void onClickListener(String categoryName, View view) {
+        HomeFragmentDirections.ActionHomeFragmentToMealsFragment toMealsFragment =
+                HomeFragmentDirections.actionHomeFragmentToMealsFragment(categoryName);
+        Navigation.findNavController(view).navigate(toMealsFragment);
     }
 }

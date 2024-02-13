@@ -4,6 +4,16 @@ import com.example.easymeal.network.NetworkCallBack;
 
 public interface MealsRepository {
     public void getAllCategories(NetworkCallBack.CategoriesCallBack categoriesCallBack);
+
     public void getMealDetails(NetworkCallBack.MealDetailsCallBack mealDetailsCallBack, String idMeal);
+
     public void getAllAreas(NetworkCallBack.AreasCallBack areasCallBack);
+
+    public void getRandomMeal(NetworkCallBack.RandomMealCallBack randomMealCallBack);
+
+    public void getMealsByCategory(NetworkCallBack.MealsByCategoryCallBack mealsByCategoryCallBack
+            , String categoryName);
+
+    public void getMealsByArea(NetworkCallBack.MealsByAreaCallBack mealsByAreaCallBack
+            , String areaName);
 }

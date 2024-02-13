@@ -8,6 +8,7 @@ import android.util.Log;
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
+import com.example.easymeal.model.pojo.MealsResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,7 +47,7 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
             @Override
             public void onResponse(Call<CategoryResponse> call, Response<CategoryResponse> response) {
                 categoriesCallBack.onSuccessResult(response.body());
-                Log.i(TAG, "onResponse: "+response.body());
+                Log.i(TAG, "onResponse: " + response.body());
             }
 
             @Override
@@ -87,5 +88,57 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
                 areasCallBack.onFailAreaCallBack(t.getMessage());
             }
         });
+    }
+
+    @Override
+    public void getRandomMeal(NetworkCallBack.RandomMealCallBack randomMealCallBack) {
+        Call<MealDetailsResponse> randomMeal = service.getRandomMeal();
+        randomMeal.enqueue(new Callback<MealDetailsResponse>() {
+            @Override
+            public void onResponse(Call<MealDetailsResponse> call, Response<MealDetailsResponse> response) {
+                randomMealCallBack.onSuccessRandomMeal(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<MealDetailsResponse> call, Throwable t) {
+                randomMealCallBack.onFailRandomMeal(t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void getMealsByCategory(NetworkCallBack.MealsByCategoryCallBack mealsByCategoryCallBack,
+                                   String categoryName) {
+        Call<MealsResponse> mealByCategory = service.getMealsByCategory(categoryName);
+        mealByCategory.enqueue(new Callback<MealsResponse>() {
+            @Override
+            public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
+                mealsByCategoryCallBack.onSuccessMealsByCategory(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<MealsResponse> call, Throwable t) {
+                mealsByCategoryCallBack.onFailMealsByCategory(t.getMessage());
+
+            }
+        });
+    }
+
+    @Override
+    public void getMealsByArea(NetworkCallBack.MealsByAreaCallBack mealsByAreaCallBack,
+                               String areaName) {
+        Call<MealsResponse> mealsResponseCall = service.getMealsByArea(areaName);
+        mealsResponseCall.enqueue(new Callback<MealsResponse>() {
+            @Override
+            public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
+                mealsByAreaCallBack.onSuccessMealsByArea(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<MealsResponse> call, Throwable t) {
+                mealsByAreaCallBack.onFailMealsByArea(t.getMessage());
+            }
+        });
+
     }
 }

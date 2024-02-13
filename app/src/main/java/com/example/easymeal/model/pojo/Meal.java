@@ -1,18 +1,34 @@
 package com.example.easymeal.model.pojo;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Meal {
-    private String strMeal;
-    private String strMealThumb;
+    @SerializedName("strMeal")
+    private String mealName;
+    @SerializedName("strMealThumb")
+    private String mealImage;
     private String idMeal;
 
-    public Meal(String strMeal, String strMealThumb, String idMeal) {
-        this.strMeal = strMeal;
-        this.strMealThumb = strMealThumb;
+    public Meal(String mealName, String mealImage, String idMeal) {
+        this.mealName = mealName;
+        this.mealImage = mealImage;
         this.idMeal = idMeal;
     }
 
     @Override
     public String toString() {
-        return String.format("Meal: %s\nMeal Thumbnail: %s\nMeal ID: %s\n", strMeal, strMealThumb, idMeal);
+        return String.format("Meal: %s\nMeal Thumbnail: %s\nMeal ID: %s\n", mealName, mealImage, idMeal);
+    }
+
+    public String getMealName() {
+        return mealName;
+    }
+
+    public String getMealImage() {
+        return mealImage;
+    }
+
+    public String getIdMeal() {
+        return idMeal;
     }
 }

@@ -3,15 +3,15 @@ package com.example.easymeal.app_features.home.presenter;
 import com.example.easymeal.app_features.home.view.HomeView;
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
+import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepository;
 import com.example.easymeal.network.NetworkCallBack;
 
 
+public class HomePresenterImpl implements HomePresenter, NetworkCallBack.CategoriesCallBack, NetworkCallBack.AreasCallBack, NetworkCallBack.RandomMealCallBack{
 
-public class HomePresenterImpl implements HomePresenter, NetworkCallBack.CategoriesCallBack, NetworkCallBack.AreasCallBack {
-
-    private HomeView view;
-    private MealsRepository repository;
+    private final HomeView view;
+    private final MealsRepository repository;
 
     public HomePresenterImpl(HomeView view, MealsRepository repository) {
         this.repository = repository;
@@ -28,7 +28,14 @@ public class HomePresenterImpl implements HomePresenter, NetworkCallBack.Categor
         repository.getAllAreas(this);
     }
 
+    @Override
+    public void getRandomMeal() {
+        repository.getRandomMeal(this);
+    }
 
+
+
+    //Categories
     @Override
     public void onSuccessResult(CategoryResponse categoryResponse) {
         view.showCategories(categoryResponse);
@@ -39,7 +46,7 @@ public class HomePresenterImpl implements HomePresenter, NetworkCallBack.Categor
         view.showCategoriesErrorMessage(errorMessage);
     }
 
-
+    //Area
     @Override
     public void onSuccessAreaCallBack(AreaListResponse areaListResponse) {
         view.showAreas(areaListResponse);
@@ -49,4 +56,17 @@ public class HomePresenterImpl implements HomePresenter, NetworkCallBack.Categor
     public void onFailAreaCallBack(String errorMessage) {
         view.showAreasErrorMessage(errorMessage);
     }
+
+    //RandomMeal
+    @Override
+    public void onSuccessRandomMeal(MealDetailsResponse mealDetails) {
+        view.showRandomMeal(mealDetails);
+    }
+
+    @Override
+    public void onFailRandomMeal(String errorMessage) {
+        view.showRandomMealErrorMessage(errorMessage);
+    }
+
+
 }

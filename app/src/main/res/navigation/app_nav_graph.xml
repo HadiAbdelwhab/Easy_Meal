@@ -9,18 +9,32 @@
         android:id="@+id/homeFragment"
         android:name="com.example.easymeal.app_features.home.view.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_mealsFragment"
+            app:destination="@id/mealsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mealDetailsFragment"
         android:name="com.example.easymeal.app_features.meal_details.view.MealDetailsFragment"
         android:label="fragment_meal_details"
         tools:layout="@layout/fragment_meal_details" >
+        <argument
+            android:name="mealId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.easymeal.app_features.search.view.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <argument
+            android:name="mealId"
+            app:argType="integer" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.easymeal.app_features.profile.view.ProfileFragment"
@@ -36,4 +50,13 @@
         android:name="com.example.easymeal.app_features.favourite.view.FavouriteFragment"
         android:label="fragment_favourite"
         tools:layout="@layout/fragment_favourite" />
+    <fragment
+        android:id="@+id/mealsFragment"
+        android:name="com.example.easymeal.app_features.meals.view.MealsFragment"
+        android:label="Meals"
+        tools:layout="@layout/fragment_favourite" >
+        <argument
+            android:name="categoryName"
+            app:argType="string" />
+    </fragment>
 </navigation>
