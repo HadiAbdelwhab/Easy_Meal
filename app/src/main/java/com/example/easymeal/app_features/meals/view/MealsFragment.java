@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,10 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.easymeal.R;
-import com.example.easymeal.app_features.home.presenter.HomePresenterImpl;
-import com.example.easymeal.app_features.home.view.adapters.OnChosenCategoryClickListener;
 import com.example.easymeal.app_features.meals.presenter.MealsPresenter;
 import com.example.easymeal.app_features.meals.presenter.MealsPresenterImpl;
+import com.example.easymeal.app_features.meals.view.adpters.MealsAdapter;
+import com.example.easymeal.app_features.meals.view.adpters.OnChosenMealListener;
 import com.example.easymeal.model.pojo.Meal;
 import com.example.easymeal.model.pojo.MealsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
@@ -26,7 +27,7 @@ import com.example.easymeal.network.MealsRemoteDataSourceImpl;
 import java.util.List;
 
 
-public class MealsFragment extends Fragment implements MealsView {
+public class MealsFragment extends Fragment implements MealsView, OnChosenMealListener {
 
 
     private static final String TAG = "MealsFragment";
@@ -70,7 +71,7 @@ public class MealsFragment extends Fragment implements MealsView {
             Log.i(TAG, "showMealsByCategory: " + meals.toString());
 
             setAdapter();
-            adapter = new MealsAdapter(getActivity(), meals);
+            adapter = new MealsAdapter(getActivity(), meals,this);
             mealRecyclerView.setAdapter(adapter);
         } else {
             Log.e(TAG, "showMealsByCategory: MealsResponse or meals list is null");
@@ -95,4 +96,11 @@ public class MealsFragment extends Fragment implements MealsView {
     }
 
 
+    @Override
+    public void OnClick(String mealId, View view) {
+        MealsFragmentDirections.ActionMealsFragmentToMealDetailsFragment toMealDetailsFragment=
+                MealsFragmentDirections.actionMealsFragmentToMealDetailsFragment(mealId);
+        Navigation.findNavController(view).navigate(toMealDetailsFragment);
+
+    }
 }

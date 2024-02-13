@@ -1,4 +1,4 @@
-package com.example.easymeal.app_features.meals.view;
+package com.example.easymeal.app_features.meals.view.adpters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,12 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.easymeal.R;
-import com.example.easymeal.app_features.home.view.adapters.CategoriesAdapter;
 import com.example.easymeal.model.pojo.Meal;
 
 import java.util.List;
@@ -21,10 +21,12 @@ import java.util.List;
 public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.ViewHolder> {
     private Context context;
     private List<Meal> mealList;
+    private OnChosenMealListener onChosenMeallistener;
 
-    public MealsAdapter(Context context, List<Meal> mealList) {
+    public MealsAdapter(Context context, List<Meal> mealList, OnChosenMealListener onChosenMeallistener) {
         this.context = context;
         this.mealList = mealList;
+        this.onChosenMeallistener=onChosenMeallistener;
     }
 
     @NonNull
@@ -46,6 +48,12 @@ public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.ViewHolder> 
                 .error(R.drawable.ic_launcher_foreground)
                 .into(holder.mealImageView);
         holder.mealNameTextView.setText(mealList.get(position).getMealName());
+        holder.mealCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onChosenMeallistener.OnClick(mealList.get(position).getIdMeal(), v);
+            }
+        });
     }
 
     @Override
@@ -53,13 +61,16 @@ public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.ViewHolder> 
         return mealList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView mealImageView;
         private TextView mealNameTextView;
+        private CardView mealCardView;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            mealImageView=itemView.findViewById(R.id.meal_image_view_meals);
-            mealNameTextView=itemView.findViewById(R.id.meal_text_view_meals);
+            mealImageView = itemView.findViewById(R.id.meal_image_view_meals);
+            mealNameTextView = itemView.findViewById(R.id.meal_text_view_meals);
+            mealCardView = itemView.findViewById(R.id.meal_card);
         }
     }
 }
