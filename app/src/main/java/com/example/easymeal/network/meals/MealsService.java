@@ -1,7 +1,10 @@
-package com.example.easymeal.network;
+package com.example.easymeal.network.meals;
+
+import android.database.Observable;
 
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
+import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.pojo.MealsResponse;
 
@@ -28,4 +31,6 @@ public interface MealsService {
 
     @GET("filter.php")
     Call<MealsResponse> getMealsByArea(@Query("a") String areaName);
+    @GET("list.php?i=list")
+    Call<IngredientsResponse> getIngredients();
 }

@@ -44,8 +44,8 @@ public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.ViewHolder> 
 
         Glide.with(context).load(mealList.get(position).getMealImage())
                 .apply(new RequestOptions().override(80, 100))
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .placeholder(R.drawable.laod)
+                .error(R.drawable.laod)
                 .into(holder.mealImageView);
         holder.mealNameTextView.setText(mealList.get(position).getMealName());
         holder.mealCardView.setOnClickListener(new View.OnClickListener() {

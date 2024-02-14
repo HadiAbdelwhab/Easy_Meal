@@ -2,6 +2,7 @@ package com.example.easymeal.app_features.home.view;
 
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
+import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 
 public interface HomeView {
@@ -12,4 +13,6 @@ public interface HomeView {
     public void showRandomMeal(MealDetailsResponse mealDetails);
     public void showRandomMealErrorMessage(String errorMessage);
 
+    public void showIngredients(IngredientsResponse ingredientsResponse);
+    public void showIngredientsErrorMessage(String errorMessage);
 }

@@ -15,4 +15,13 @@
     <string name="search_text_view">Search</string>
     <string name="plan_text_view">Plan\n</string>
     <string name="profile_text_view">Profile</string>
+    <string name="favourite_text_view">Favourite</string>
+    <string name="join_us_now">Join us now</string>
+    <string name="name_text_view">Name</string>
+    <string name="register_button">Register</string>
+    <string name="let_s_try_a_new_meal_text_view">Let\'s try a new meal</string>
+    <string name="area_text_view">Area\n</string>
+    <string name="ingredient_text_view">Ingredient</string>
+    <string name="category_text_view">Category</string>
+    <string name="client_id">291040840405-28ppclmssq2vcjt7ctjs42v68gncbpvk.apps.googleusercontent.com</string>
 </resources>

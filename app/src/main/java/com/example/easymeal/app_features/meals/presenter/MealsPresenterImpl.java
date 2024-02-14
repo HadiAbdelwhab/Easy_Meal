@@ -1,10 +1,9 @@
 package com.example.easymeal.app_features.meals.presenter;
 
-import com.example.easymeal.app_features.home.view.HomeView;
 import com.example.easymeal.app_features.meals.view.MealsView;
 import com.example.easymeal.model.pojo.MealsResponse;
 import com.example.easymeal.model.repository.MealsRepository;
-import com.example.easymeal.network.NetworkCallBack;
+import com.example.easymeal.network.meals.NetworkCallBack;
 
 public class MealsPresenterImpl implements MealsPresenter, NetworkCallBack.MealsByAreaCallBack, NetworkCallBack.MealsByCategoryCallBack {
     private final MealsView view;

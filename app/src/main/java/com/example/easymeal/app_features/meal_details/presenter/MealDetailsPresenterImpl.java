@@ -3,7 +3,7 @@ package com.example.easymeal.app_features.meal_details.presenter;
 import com.example.easymeal.app_features.meal_details.view.MealDetailsView;
 import com.example.easymeal.model.repository.MealsRepository;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
-import com.example.easymeal.network.NetworkCallBack;
+import com.example.easymeal.network.meals.NetworkCallBack;
 
 public class MealDetailsPresenterImpl implements MealDetailsPresenter, NetworkCallBack.MealDetailsCallBack {
     private MealDetailsView view;

@@ -22,7 +22,7 @@ import com.example.easymeal.app_features.meals.view.adpters.OnChosenMealListener
 import com.example.easymeal.model.pojo.Meal;
 import com.example.easymeal.model.pojo.MealsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
-import com.example.easymeal.network.MealsRemoteDataSourceImpl;
+import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
 
 import java.util.List;
 

@@ -59,5 +59,15 @@
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/meal_area_text_view" />
+        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+            android:id="@+id/youtube_player_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/instruction_text_view"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:videoId="S0Q4gqBUs7c"
+            app:autoPlay="true" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

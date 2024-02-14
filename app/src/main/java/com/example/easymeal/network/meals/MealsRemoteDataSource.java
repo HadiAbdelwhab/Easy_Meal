@@ -1,4 +1,4 @@
-package com.example.easymeal.network;
+package com.example.easymeal.network.meals;
 
 public interface MealsRemoteDataSource {
 
@@ -16,4 +16,5 @@ public interface MealsRemoteDataSource {
 
     public void getMealsByArea(NetworkCallBack.MealsByAreaCallBack mealsByAreaCallBack,
                                String areaName);
+    public void getIngredients(NetworkCallBack.IngredientsCallBack ingredientsCallBack);
 }

@@ -1,6 +1,6 @@
 package com.example.easymeal.model.repository;
 
-import com.example.easymeal.network.NetworkCallBack;
+import com.example.easymeal.network.meals.NetworkCallBack;
 
 public interface MealsRepository {
     public void getAllCategories(NetworkCallBack.CategoriesCallBack categoriesCallBack);
@@ -16,4 +16,5 @@ public interface MealsRepository {
 
     public void getMealsByArea(NetworkCallBack.MealsByAreaCallBack mealsByAreaCallBack
             , String areaName);
+    public void getIngredients(NetworkCallBack.IngredientsCallBack ingredientsCallBack);
 }

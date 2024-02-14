@@ -1,4 +1,4 @@
-package com.example.easymeal.network;
+package com.example.easymeal.network.meals;
 
 import static com.example.easymeal.util.Constants.BASE_URL;
 
@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
+import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.pojo.MealsResponse;
 
@@ -14,6 +15,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
@@ -27,6 +29,7 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build();
 
         service = retrofit.create(MealsService.class);
@@ -140,5 +143,21 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
             }
         });
 
+    }
+
+    @Override
+    public void getIngredients(NetworkCallBack.IngredientsCallBack ingredientsCallBack) {
+        Call<IngredientsResponse>responseCall= service.getIngredients();
+        responseCall.enqueue(new Callback<IngredientsResponse>() {
+            @Override
+            public void onResponse(Call<IngredientsResponse> call, Response<IngredientsResponse> response) {
+                ingredientsCallBack.onSuccessIngredients(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<IngredientsResponse> call, Throwable t) {
+                ingredientsCallBack.onFailIngredients(t.getMessage());
+            }
+        });
     }
 }

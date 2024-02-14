@@ -3,12 +3,14 @@ package com.example.easymeal.app_features.home.presenter;
 import com.example.easymeal.app_features.home.view.HomeView;
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
+import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepository;
-import com.example.easymeal.network.NetworkCallBack;
+import com.example.easymeal.network.meals.NetworkCallBack;
 
 
-public class HomePresenterImpl implements HomePresenter, NetworkCallBack.CategoriesCallBack, NetworkCallBack.AreasCallBack, NetworkCallBack.RandomMealCallBack{
+public class HomePresenterImpl implements HomePresenter, NetworkCallBack.CategoriesCallBack,
+        NetworkCallBack.AreasCallBack, NetworkCallBack.RandomMealCallBack, NetworkCallBack.IngredientsCallBack {
 
     private final HomeView view;
     private final MealsRepository repository;
@@ -33,6 +35,10 @@ public class HomePresenterImpl implements HomePresenter, NetworkCallBack.Categor
         repository.getRandomMeal(this);
     }
 
+    @Override
+    public void getIngredients() {
+        repository.getIngredients(this);
+    }
 
 
     //Categories
@@ -69,4 +75,13 @@ public class HomePresenterImpl implements HomePresenter, NetworkCallBack.Categor
     }
 
 
+    @Override
+    public void onSuccessIngredients(IngredientsResponse ingredientsResponse) {
+        view.showIngredients(ingredientsResponse);
+    }
+
+    @Override
+    public void onFailIngredients(String errorMessage) {
+        view.showIngredientsErrorMessage(errorMessage);
+    }
 }

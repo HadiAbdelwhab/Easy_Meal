@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,13 +24,13 @@ import com.example.easymeal.app_features.home.view.adapters.CountriesAdapter;
 import com.example.easymeal.R;
 import com.example.easymeal.app_features.home.view.adapters.OnChosenAreaListener;
 import com.example.easymeal.app_features.home.view.adapters.OnChosenCategoryClickListener;
-import com.example.easymeal.app_features.meal_details.view.MealDetailsFragment;
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.Category;
 import com.example.easymeal.model.pojo.CategoryResponse;
+import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
-import com.example.easymeal.network.MealsRemoteDataSourceImpl;
+import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +61,7 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
         categoriesRecyclerView = view.findViewById(R.id.categories_recycler_view);
         randomMealImage = view.findViewById(R.id.random_image_view_home);
         mealNameTextView = view.findViewById(R.id.meal_name_text_view_home);
-        setUi();
+        setUI();
         presenter = new HomePresenterImpl(this,
                 MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity())));
         presenter.getAllCategories();
@@ -71,7 +70,7 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
 
     }
 
-    private void setUi() {
+    private void setUI() {
         countriesRecyclerView.setHasFixedSize(true);
         LinearLayoutManager countriesLayoutManager = new LinearLayoutManager(getActivity());
         countriesLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -169,6 +168,16 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
     public void showRandomMealErrorMessage(String errorMessage) {
 
         Log.i(TAG, "showRandomMealErrorMessage: " + errorMessage);
+    }
+
+    @Override
+    public void showIngredients(IngredientsResponse ingredientsResponse) {
+
+    }
+
+    @Override
+    public void showIngredientsErrorMessage(String errorMessage) {
+
     }
 
 

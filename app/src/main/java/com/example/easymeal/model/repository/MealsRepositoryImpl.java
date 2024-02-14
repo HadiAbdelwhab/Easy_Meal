@@ -1,8 +1,8 @@
 package com.example.easymeal.model.repository;
 
-import com.example.easymeal.network.MealsRemoteDataSource;
-import com.example.easymeal.network.MealsRemoteDataSourceImpl;
-import com.example.easymeal.network.NetworkCallBack;
+import com.example.easymeal.network.meals.MealsRemoteDataSource;
+import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
+import com.example.easymeal.network.meals.NetworkCallBack;
 
 public class MealsRepositoryImpl implements MealsRepository {
 
@@ -53,5 +53,10 @@ public class MealsRepositoryImpl implements MealsRepository {
                                String areaName) {
 
         remoteDataSource.getMealsByArea(mealsByAreaCallBack, areaName);
+    }
+
+    @Override
+    public void getIngredients(NetworkCallBack.IngredientsCallBack ingredientsCallBack) {
+        remoteDataSource.getIngredients(ingredientsCallBack);
     }
 }

@@ -1,7 +1,8 @@
-package com.example.easymeal.network;
+package com.example.easymeal.network.meals;
 
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
+import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.pojo.MealsResponse;
 
@@ -32,5 +33,10 @@ public interface NetworkCallBack {
 
         public void onSuccessMealsByArea(MealsResponse mealsResponse);
         public void onFailMealsByArea(String errorMessage);
+    }
+    interface IngredientsCallBack{
+        public void onSuccessIngredients(IngredientsResponse ingredientsResponse);
+        public void onFailIngredients(String errorMessage);
+
     }
 }
