@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.easymeal.R;
 import com.example.easymeal.app_features.MainActivity;
+import com.example.easymeal.auth.AuthenticationActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -89,6 +90,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
+                getActivity().finish();
             }
         });
         loginButton.setOnClickListener(new View.OnClickListener() {

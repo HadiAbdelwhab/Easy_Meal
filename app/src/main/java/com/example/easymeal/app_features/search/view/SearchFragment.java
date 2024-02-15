@@ -2,60 +2,44 @@ package com.example.easymeal.app_features.search.view;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.easymeal.R;
+import com.example.easymeal.app_features.home.view.adapters.CategoriesAdapter;
+import com.example.easymeal.app_features.search.presenter.SearchPresenter;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.textfield.TextInputEditText;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SearchFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.List;
+import java.util.stream.Collectors;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class SearchFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "SearchFragment";
+    private CategoriesAdapter adapter;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private SearchPresenter presenter;
+    private RecyclerView recyclerView;
+    private Chip categoryChip;
+    private List<String> strings;
+    private List<String> filteredNames;
+    private TextInputEditText searchEditText;
     public SearchFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SearchFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SearchFragment newInstance(String param1, String param2) {
-        SearchFragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,4 +47,38 @@ public class SearchFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initViews(view);
+    }
+
+    private void initViews(View view) {
+        recyclerView=view.findViewById(R.id.search_recycler_view);
+        categoryChip=view.findViewById(R.id.chip_category);
+        searchEditText=view.findViewById(R.id.search_text_field);
+    }
+    private void filterCategories(String query) {
+        Observable.create(emitter -> {
+                    List<String> filteredList = strings.stream()
+                            .filter(name -> name.toLowerCase().contains(query.toLowerCase()))
+                            .collect(Collectors.toList());
+                    emitter.onNext(filteredList);
+                    emitter.onComplete();
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        filteredList -> {
+                            filteredNames.clear();
+                            filteredNames.addAll((List<String>) filteredList);
+                            adapter.notifyDataSetChanged();
+                        },
+                        throwable -> {
+                            Log.i(TAG, "filterNames: error");
+                        }
+                );
+    }
+
 }

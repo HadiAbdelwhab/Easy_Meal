@@ -145,7 +145,7 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
     @Override
     public void showRandomMeal(MealDetailsResponse mealDetails) {
         MealDetailsResponse.MealDetails randomMeal = mealDetails.getMeals().get(0);
-        Glide.with(getActivity())
+        Glide.with(requireContext())
                 .load(randomMeal.getMealThumb())
                 .error(R.drawable.laod)
                 .into(randomMealImage);
