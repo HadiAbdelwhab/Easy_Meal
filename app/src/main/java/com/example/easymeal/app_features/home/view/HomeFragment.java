@@ -24,6 +24,7 @@ import com.example.easymeal.app_features.home.view.adapters.CountriesAdapter;
 import com.example.easymeal.R;
 import com.example.easymeal.app_features.home.view.adapters.OnChosenAreaListener;
 import com.example.easymeal.app_features.home.view.adapters.OnChosenCategoryClickListener;
+import com.example.easymeal.database.MealsLocalDataSourceImpl;
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.Category;
 import com.example.easymeal.model.pojo.CategoryResponse;
@@ -63,7 +64,8 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
         mealNameTextView = view.findViewById(R.id.meal_name_text_view_home);
         setUI();
         presenter = new HomePresenterImpl(this,
-                MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity())));
+                MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
+                        MealsLocalDataSourceImpl.getInstance(getActivity())));
         presenter.getAllCategories();
         presenter.getAllAreas();
         presenter.getRandomMeal();

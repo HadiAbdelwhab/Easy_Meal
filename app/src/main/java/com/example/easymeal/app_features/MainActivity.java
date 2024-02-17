@@ -14,9 +14,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
 
-
     private BottomNavigationView bottomNavigationView;
     private NavController navController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,8 +27,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
 
-
-         navController =Navigation.findNavController(this,R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -41,8 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 navigateToFragment(R.id.planFragment);
             } else if (itemId == R.id.profileFragment) {
                 navigateToFragment(R.id.profileFragment);
-            }
-            else if(itemId==R.id.searchFragment){
+            } else if (itemId == R.id.searchFragment) {
                 navigateToFragment(R.id.searchFragment);
             }
             return true;
@@ -52,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (!navController.navigateUp()){
+        if (!navController.navigateUp()) {
             super.onBackPressed();
         }
     }

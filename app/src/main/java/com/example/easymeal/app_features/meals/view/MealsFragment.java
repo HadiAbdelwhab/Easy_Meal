@@ -19,6 +19,7 @@ import com.example.easymeal.app_features.meals.presenter.MealsPresenter;
 import com.example.easymeal.app_features.meals.presenter.MealsPresenterImpl;
 import com.example.easymeal.app_features.meals.view.adpters.MealsAdapter;
 import com.example.easymeal.app_features.meals.view.adpters.OnChosenMealListener;
+import com.example.easymeal.database.MealsLocalDataSourceImpl;
 import com.example.easymeal.model.pojo.Meal;
 import com.example.easymeal.model.pojo.MealsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
@@ -54,7 +55,8 @@ public class MealsFragment extends Fragment implements MealsView, OnChosenMealLi
         countryName = MealsFragmentArgs.fromBundle(getArguments()).getCountryName();
         Log.i(TAG, "onViewCreated: " + categoryName);
         presenter = new MealsPresenterImpl(this,
-                MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity())));
+                MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
+                        MealsLocalDataSourceImpl.getInstance(getActivity())));
 
         presenter.getMealsByArea(countryName);
         presenter.getMealsByCategory(categoryName);

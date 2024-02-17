@@ -1,21 +1,30 @@
 package com.example.easymeal.model.repository;
 
+import com.example.easymeal.database.MealsLocalDataSource;
+import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.network.meals.MealsRemoteDataSource;
 import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
 import com.example.easymeal.network.meals.NetworkCallBack;
+
+import java.util.List;
+
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
 
 public class MealsRepositoryImpl implements MealsRepository {
 
     private static MealsRepositoryImpl repository = null;
     private final MealsRemoteDataSource remoteDataSource;
-
-    private MealsRepositoryImpl(MealsRemoteDataSource remoteDataSource) {
+    private final MealsLocalDataSource localDataSource;
+    private MealsRepositoryImpl(MealsRemoteDataSource remoteDataSource,MealsLocalDataSource localDataSource) {
         this.remoteDataSource = remoteDataSource;
+        this.localDataSource=localDataSource;
     }
 
-    public static MealsRepositoryImpl getInstance(MealsRemoteDataSourceImpl remoteDataSource) {
+    public static MealsRepositoryImpl getInstance(MealsRemoteDataSourceImpl remoteDataSource,
+                                                  MealsLocalDataSource localDataSource) {
         if (repository == null)
-            repository = new MealsRepositoryImpl(remoteDataSource);
+            repository = new MealsRepositoryImpl(remoteDataSource,localDataSource);
         return repository;
     }
 
@@ -58,5 +67,20 @@ public class MealsRepositoryImpl implements MealsRepository {
     @Override
     public void getIngredients(NetworkCallBack.IngredientsCallBack ingredientsCallBack) {
         remoteDataSource.getIngredients(ingredientsCallBack);
+    }
+
+    @Override
+    public Completable insertMeal(MealDetailsResponse.MealDetails mealDetails) {
+        return localDataSource.insertMeal(mealDetails);
+    }
+
+    @Override
+    public void deleteMeal(MealDetailsResponse.MealDetails mealDetails) {
+        localDataSource.deleteMeal(mealDetails);
+    }
+
+    @Override
+    public Flowable<List<MealDetailsResponse.MealDetails>> getSavedMeals() {
+        return localDataSource.getFavouriteMeals();
     }
 }

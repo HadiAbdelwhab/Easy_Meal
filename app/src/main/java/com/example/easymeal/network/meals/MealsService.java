@@ -1,6 +1,5 @@
 package com.example.easymeal.network.meals;
 
-import android.database.Observable;
 
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
@@ -8,6 +7,7 @@ import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.pojo.MealsResponse;
 
+import io.reactivex.rxjava3.core.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -15,7 +15,7 @@ import retrofit2.http.Query;
 public interface MealsService {
 
     @GET("categories.php")
-    public Call<CategoryResponse> getAllCategories();
+    public Observable<CategoryResponse> getAllCategories();
 
     @GET("lookup.php")
     Call<MealDetailsResponse> getMealDetailsById(@Query("i") String mealId);
@@ -32,5 +32,5 @@ public interface MealsService {
     @GET("filter.php")
     Call<MealsResponse> getMealsByArea(@Query("a") String areaName);
     @GET("list.php?i=list")
-    Call<IngredientsResponse> getIngredients();
+    Observable<IngredientsResponse> getIngredients();
 }

@@ -24,4 +24,5 @@
     <string name="ingredient_text_view">Ingredient</string>
     <string name="category_text_view">Category</string>
     <string name="client_id">291040840405-28ppclmssq2vcjt7ctjs42v68gncbpvk.apps.googleusercontent.com</string>
+    <string name="add_to_favourite_button">Add to Favourite</string>
 </resources>

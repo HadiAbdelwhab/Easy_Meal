@@ -1,6 +1,8 @@
 package com.example.easymeal.model.pojo;
 
 import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -14,9 +16,10 @@ public class MealDetailsResponse {
     public List<MealDetails> getMeals() {
         return meals;
     }
-
+    @Entity(tableName = "meals")
     public static class MealDetails {
-
+        @PrimaryKey
+        @NonNull
         @SerializedName("idMeal")
         private String idMeal;
 
@@ -111,6 +114,58 @@ public class MealDetailsResponse {
         }
 
         // Continue adding getters for the rest of the ingredients and measures...
+
+        public void setIdMeal(String idMeal) {
+            this.idMeal = idMeal;
+        }
+
+        public void setMealName(String mealName) {
+            this.mealName = mealName;
+        }
+
+        public void setStrDrinkAlternate(String strDrinkAlternate) {
+            this.strDrinkAlternate = strDrinkAlternate;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public void setArea(String area) {
+            this.area = area;
+        }
+
+        public void setInstructions(String instructions) {
+            this.instructions = instructions;
+        }
+
+        public void setMealThumb(String mealThumb) {
+            this.mealThumb = mealThumb;
+        }
+
+        public void setStrTags(String strTags) {
+            this.strTags = strTags;
+        }
+
+        public void setYoutubeURL(String youtubeURL) {
+            this.youtubeURL = youtubeURL;
+        }
+
+        public void setIngredient1(String ingredient1) {
+            this.ingredient1 = ingredient1;
+        }
+
+        public void setIngredient2(String ingredient2) {
+            this.ingredient2 = ingredient2;
+        }
+
+        public void setStrSource(String strSource) {
+            this.strSource = strSource;
+        }
+
+        public void setStrImageSource(String strImageSource) {
+            this.strImageSource = strImageSource;
+        }
 
         public String getIngredient3() {
             return ingredient3;

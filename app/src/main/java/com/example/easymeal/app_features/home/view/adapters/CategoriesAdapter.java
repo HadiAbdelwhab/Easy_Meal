@@ -1,7 +1,6 @@
 package com.example.easymeal.app_features.home.view.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,13 +31,19 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         this.listener = listener;
     }
 
+
+
+    public CategoriesAdapter(FragmentActivity activity, List<String> categoriesName) {
+        this(activity, null, null);
+        // Initialize your categoryList based on categoriesName if needed.
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.category_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
-        //Log.i(TAG, "onCreateViewHolder: ");
         return viewHolder;
     }
 
@@ -50,19 +55,16 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
                 .error(R.drawable.ic_launcher_foreground)
                 .into(holder.categoryImageView);
         holder.categoryNameTextView.setText(categoryList.get(position).getCategoryName());
-        holder.categoryCardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "onClick: "+categoryList.get(position).getCategoryId());
+        holder.categoryCardView.setOnClickListener(v -> {
+            if (listener != null) {
                 listener.onCategoryClick(categoryList.get(position).getCategoryName(), v);
-
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return categoryList.size();
+        return categoryList != null ? categoryList.size() : 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -11,11 +11,18 @@ import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.pojo.MealsResponse;
 
+import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
@@ -45,7 +52,32 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
 
     @Override
     public void getCategories(NetworkCallBack.CategoriesCallBack categoriesCallBack) {
-        Call<CategoryResponse> mealCategoryCall = service.getAllCategories();
+        Observable<CategoryResponse> observable=service.getAllCategories();
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<CategoryResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull CategoryResponse categoryResponse) {
+                        categoriesCallBack.onSuccessResult(categoryResponse);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        categoriesCallBack.onFailure(e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+        /*Call<CategoryResponse> mealCategoryCall = service.getAllCategories();
         mealCategoryCall.enqueue(new Callback<CategoryResponse>() {
             @Override
             public void onResponse(Call<CategoryResponse> call, Response<CategoryResponse> response) {
@@ -57,7 +89,7 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
             public void onFailure(Call<CategoryResponse> call, Throwable t) {
                 categoriesCallBack.onFailure(t.getMessage());
             }
-        });
+        });*/
     }
 
     @Override
@@ -147,7 +179,35 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
 
     @Override
     public void getIngredients(NetworkCallBack.IngredientsCallBack ingredientsCallBack) {
-        Call<IngredientsResponse>responseCall= service.getIngredients();
+        Observable<IngredientsResponse> observable=service.getIngredients();
+
+                observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<IngredientsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull IngredientsResponse ingredientsResponse) {
+                        ingredientsCallBack.onSuccessIngredients(ingredientsResponse);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        ingredientsCallBack.onFailIngredients(e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+
+        /*Call<IngredientsResponse>responseCall= service.getIngredients();
         responseCall.enqueue(new Callback<IngredientsResponse>() {
             @Override
             public void onResponse(Call<IngredientsResponse> call, Response<IngredientsResponse> response) {
@@ -158,6 +218,6 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
             public void onFailure(Call<IngredientsResponse> call, Throwable t) {
                 ingredientsCallBack.onFailIngredients(t.getMessage());
             }
-        });
+        });*/
     }
 }
