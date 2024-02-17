@@ -25,6 +25,9 @@ public interface MealsRepository {
 
     void getIngredients(NetworkCallBack.IngredientsCallBack ingredientsCallBack);
 
+    void searchMealByName(NetworkCallBack.SearchMealCallBack searchMealCallBack,
+                          String mealName);
+
     //local_methods
     Completable insertMeal(MealDetailsResponse.MealDetails mealDetails);
 

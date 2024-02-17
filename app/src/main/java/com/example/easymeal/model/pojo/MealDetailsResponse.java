@@ -59,7 +59,6 @@ public class MealDetailsResponse {
         @SerializedName("strIngredient5")
         private String ingredient5;
 
-        // Continue defining the rest of the ingredients and measures...
 
         @SerializedName("strSource")
         private String strSource;
@@ -67,7 +66,6 @@ public class MealDetailsResponse {
         @SerializedName("strImageSource")
         private String strImageSource;
 
-        // Add getters for other fields as needed
 
         public String getIdMeal() {
             return idMeal;
@@ -113,7 +111,6 @@ public class MealDetailsResponse {
             return ingredient2;
         }
 
-        // Continue adding getters for the rest of the ingredients and measures...
 
         public void setIdMeal(String idMeal) {
             this.idMeal = idMeal;
@@ -214,7 +211,6 @@ public class MealDetailsResponse {
                     ", youtubeURL='" + youtubeURL + '\'' +
                     ", ingredient1='" + ingredient1 + '\'' +
                     ", ingredient2='" + ingredient2 + '\'' +
-                    // Continue adding the rest of the ingredients and measures...
                     ", strSource='" + strSource + '\'' +
                     ", strImageSource='" + strImageSource + '\'' +
                     '}';

@@ -1,5 +1,6 @@
 package com.example.easymeal.auth.login.view;
 
+import static com.example.easymeal.util.Constants.USER_NAME_KEY;
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 import android.content.Intent;
@@ -36,6 +37,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class LoginFragment extends Fragment {
@@ -115,24 +121,20 @@ public class LoginFragment extends Fragment {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d(TAG, "signInWithEmail:success");
                                     FirebaseUser user = auth.getCurrentUser();
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
-                                    //updateUI(user);
+                                    if (user != null) {
+                                        // Fetch user's name from the database
+                                        fetchAndNavigateToMain(user.getUid());
+                                    }
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w(TAG, "signInWithEmail:failure", task.getException());
                                     Toast.makeText(getActivity(), "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
-                                    //updateUI(null);
                                 }
                             }
                         });
-
-
             }
-        });
-        registerTextView.setOnClickListener(new View.OnClickListener() {
+        });        registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment);
@@ -189,6 +191,28 @@ public class LoginFragment extends Fragment {
                 Log.w(TAG, "Google sign in failed", e);
             }
         }
+    }
+    private void fetchAndNavigateToMain(String userId) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(userId).child("name");
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String userName = snapshot.getValue(String.class);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra(USER_NAME_KEY, userName);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle database error if any
+                Log.e(TAG, "Error fetching user's name from database:", error.toException());
+            }
+        });
     }
 
 

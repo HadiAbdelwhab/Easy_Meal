@@ -7,36 +7,55 @@ import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.pojo.MealsResponse;
 
 public interface NetworkCallBack {
-    interface CategoriesCallBack{
-        public void onSuccessResult(CategoryResponse categories);
-        public void onFailure(String errorMessage);
+    interface CategoriesCallBack {
+        void onSuccessResult(CategoryResponse categories);
+
+        void onFailure(String errorMessage);
     }
-    interface MealDetailsCallBack{
-        public void onSuccessMealDetails(MealDetailsResponse mealDetailsResponse);
-        public void onFailMealDetails(String errorMessage);
+
+    interface MealDetailsCallBack {
+        void onSuccessMealDetails(MealDetailsResponse mealDetailsResponse);
+
+        void onFailMealDetails(String errorMessage);
 
     }
-    interface AreasCallBack{
-        public void onSuccessAreaCallBack(AreaListResponse areaListResponse);
-        public void onFailAreaCallBack(String errorMessage);
+
+    interface AreasCallBack {
+        void onSuccessAreaCallBack(AreaListResponse areaListResponse);
+
+        void onFailAreaCallBack(String errorMessage);
     }
-    interface  RandomMealCallBack{
-        public void onSuccessRandomMeal(MealDetailsResponse mealDetails);
-        public void onFailRandomMeal(String errorMessage);
+
+    interface RandomMealCallBack {
+        void onSuccessRandomMeal(MealDetailsResponse mealDetails);
+
+        void onFailRandomMeal(String errorMessage);
 
     }
-    interface MealsByCategoryCallBack{
-        public void onSuccessMealsByCategory(MealsResponse mealsResponse);
-        public void onFailMealsByCategory(String errorMessage);
-    }
-    interface MealsByAreaCallBack{
 
-        public void onSuccessMealsByArea(MealsResponse mealsResponse);
-        public void onFailMealsByArea(String errorMessage);
-    }
-    interface IngredientsCallBack{
-        public void onSuccessIngredients(IngredientsResponse ingredientsResponse);
-        public void onFailIngredients(String errorMessage);
+    interface MealsByCategoryCallBack {
+        void onSuccessMealsByCategory(MealsResponse mealsResponse);
 
+        void onFailMealsByCategory(String errorMessage);
+    }
+
+    interface MealsByAreaCallBack {
+
+        void onSuccessMealsByArea(MealsResponse mealsResponse);
+
+        void onFailMealsByArea(String errorMessage);
+    }
+
+    interface IngredientsCallBack {
+        void onSuccessIngredients(IngredientsResponse ingredientsResponse);
+
+        void onFailIngredients(String errorMessage);
+
+    }
+
+    interface SearchMealCallBack {
+        void onSuccessSearchMeal(MealDetailsResponse mealDetailsResponse);
+
+        void onFailSearchMeal(String errorMessage);
     }
 }

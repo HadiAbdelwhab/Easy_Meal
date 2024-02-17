@@ -35,10 +35,6 @@ public class HomePresenterImpl implements HomePresenter, NetworkCallBack.Categor
         repository.getRandomMeal(this);
     }
 
-    @Override
-    public void getIngredients() {
-        repository.getIngredients(this);
-    }
 
 
     //Categories

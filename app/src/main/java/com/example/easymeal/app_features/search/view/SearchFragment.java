@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,18 +15,29 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.easymeal.R;
 import com.example.easymeal.app_features.home.view.adapters.CategoriesAdapter;
+import com.example.easymeal.app_features.meals.view.adpters.MealsAdapter;
 import com.example.easymeal.app_features.search.presenter.SearchPresenter;
 import com.example.easymeal.app_features.search.presenter.SearchPresenterImpl;
 import com.example.easymeal.database.MealsLocalDataSourceImpl;
+import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.Category;
 import com.example.easymeal.model.pojo.CategoryResponse;
+import com.example.easymeal.model.pojo.IngredientsResponse;
+import com.example.easymeal.model.pojo.Meal;
+import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
+import com.jakewharton.rxbinding4.widget.RxTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +60,12 @@ public class SearchFragment extends Fragment implements SearchView {
     private List<String> categoriesName;
     private List<String> filteredNames;
     private List<Category> categoryList;
+    private ChipGroup chipGroup;
+    private MealsAdapter mealsAdapter;
+    private CardView searchCardView;
+    private TextView searhMealTextView;
+    private ImageView searchMealImageView;
+
     private final CompositeDisposable disposables = new CompositeDisposable();
 
 
@@ -77,11 +95,7 @@ public class SearchFragment extends Fragment implements SearchView {
     }
 
     private void setListeners() {
-        categoryChip.setOnCloseIconClickListener(v -> {
-            // Clear the chip and update the category list
-            categoryChip.setText("");
-            filterCategories("");
-        });
+
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -90,36 +104,45 @@ public class SearchFragment extends Fragment implements SearchView {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterCategories(s.toString());
+                presenter.searchMealByName(s.toString());
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-               // adapter=new CategoriesAdapter(requireActivity(),filteredNames);
             }
         });
 
-        /*disposables.add(RxTextView.textChanges(searchEditText)
+        disposables.add(RxTextView.textChanges(searchEditText)
                 .debounce(1000, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(text -> {
                     Log.i(TAG, "On Change Text: " + text);
                 }, error -> {
                     Log.e(TAG, "Error: ");
-                }));*/
+                }));
     }
 
     private void initViews(View view) {
         recyclerView = view.findViewById(R.id.search_recycler_view);
         categoryChip = view.findViewById(R.id.chip_category);
         searchEditText = view.findViewById(R.id.search_text_field);
-
+        chipGroup = view.findViewById(R.id.chips_group);
+        searchCardView = view.findViewById(R.id.search_meal_card);
+        searhMealTextView = view.findViewById(R.id.search_meal_text_view_meals);
+        searchMealImageView = view.findViewById(R.id.search_meal_image_view_meals);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager categoriesLayoutManger = new LinearLayoutManager(getActivity());
         categoriesLayoutManger.setOrientation(RecyclerView.HORIZONTAL);
         recyclerView.setLayoutManager(categoriesLayoutManger);
 
+    }
+
+    private void setAdapter() {
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        manager.setOrientation(RecyclerView.VERTICAL);
+        recyclerView.setLayoutManager(manager);
     }
 
     private void filterCategories(String query) {
@@ -165,5 +188,47 @@ public class SearchFragment extends Fragment implements SearchView {
     public void showCategoriesErrorMessage(String ErrorMassage) {
 
     }
+
+    @Override
+    public void showIngredients(IngredientsResponse ingredientsResponse) {
+
+    }
+
+    @Override
+    public void showIngredientsErrorMessage(String ErrorMassage) {
+
+    }
+
+    @Override
+    public void showAreas(AreaListResponse areaListResponse) {
+
+    }
+
+    @Override
+    public void showAreasErrorMessage(String ErrorMassage) {
+
+    }
+
+    @Override
+    public void searchMealByNameResult(MealDetailsResponse mealDetailsResponse) {
+
+        recyclerView.setVisibility(View.GONE);
+        searchCardView.setVisibility(View.VISIBLE);
+
+        searhMealTextView.setText(mealDetailsResponse.getMeals().get(0).getMealName());
+        Glide.with(getActivity()).load(mealDetailsResponse.getMeals().get(0).getMealThumb())
+                .placeholder(R.drawable.laod)
+                .error(R.drawable.laod)
+                .into(searchMealImageView);
+
+
+
+    }
+
+    @Override
+    public void searchMealByNameErrorMessage(String errorMessage) {
+
+    }
+
 
 }

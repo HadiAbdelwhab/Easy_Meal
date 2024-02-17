@@ -25,4 +25,5 @@
     <string name="category_text_view">Category</string>
     <string name="client_id">291040840405-28ppclmssq2vcjt7ctjs42v68gncbpvk.apps.googleusercontent.com</string>
     <string name="add_to_favourite_button">Add to Favourite</string>
+    <string name="confirm_password_text_view">Confirm password</string>
 </resources>

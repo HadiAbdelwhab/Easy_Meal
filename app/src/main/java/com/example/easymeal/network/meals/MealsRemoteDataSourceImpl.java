@@ -34,7 +34,7 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
 
 
     private MealsRemoteDataSourceImpl(Context context) {
-        int cacheSize =10*1024*1024;
+        int cacheSize = 10 * 1024 * 1024;
         Cache cache = new Cache(context.getCacheDir(), cacheSize);
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -58,6 +58,7 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
 
         service = retrofit.create(MealsService.class);
     }
+
     private boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -264,5 +265,34 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
                 });
 
 
+    }
+
+    @Override
+    public void searchMealByName(NetworkCallBack.SearchMealCallBack searchMealCallBack,
+                                 String mealName) {
+        Observable<MealDetailsResponse> observable = service.searchMealByName(mealName);
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MealDetailsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull MealDetailsResponse mealDetailsResponse) {
+                        searchMealCallBack.onSuccessSearchMeal(mealDetailsResponse);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        searchMealCallBack.onFailSearchMeal(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

@@ -66,7 +66,9 @@ dependencies {
 
     //firebaseUI
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
-
+    //firebase_database
+    implementation("com.google.firebase:firebase-database")
+    implementation 'com.google.firebase:firebase-firestore:24.2.0'
 
     //nav_graph
     def nav_version = "2.7.7"
@@ -88,6 +90,8 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
     implementation 'io.reactivex.rxjava3:rxjava:3.1.6'
     implementation ("com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0")
+    implementation 'com.jakewharton.rxbinding4:rxbinding:4.0.0'
+
     //RxRoom
     implementation 'androidx.room:room-rxjava3:2.6.1'
 

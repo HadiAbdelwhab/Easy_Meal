@@ -70,6 +70,11 @@ public class MealsRepositoryImpl implements MealsRepository {
     }
 
     @Override
+    public void searchMealByName(NetworkCallBack.SearchMealCallBack searchMealCallBack,String mealName) {
+        remoteDataSource.searchMealByName(searchMealCallBack,mealName);
+    }
+
+    @Override
     public Completable insertMeal(MealDetailsResponse.MealDetails mealDetails) {
         return localDataSource.insertMeal(mealDetails);
     }

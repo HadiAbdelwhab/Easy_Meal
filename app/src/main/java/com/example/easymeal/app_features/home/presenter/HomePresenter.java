@@ -4,6 +4,6 @@ public interface HomePresenter {
     public void getAllCategories();
     public void getAllAreas();
     public void getRandomMeal();
-    public void getIngredients();
+
 
 }

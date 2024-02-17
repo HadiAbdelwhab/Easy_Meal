@@ -25,11 +25,17 @@ import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
@@ -43,6 +49,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private MealDetailsResponse.MealDetails mealDetails;
     private RecyclerView ingredientsRecyclerView;
     private IngredientAdapter adapter;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference reference = database.getReference("favourites");
+
 
     public MealDetailsFragment() {
         // Required empty public constructor
@@ -88,11 +97,32 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     }
 
     private void setListeners() {
-
         addToFavouriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mealDetails == null) {
+                    Log.e(TAG, "mealDetails object is null, cannot save to Firebase");
+                    return;
+                }
                 presenter.insertMeal(mealDetails);
+                Map<String, Object> mealDetailsMap = new HashMap<>();
+                mealDetailsMap.put("mealId", mealDetails.getIdMeal());
+                mealDetailsMap.put("mealName", mealDetails.getMealName());
+
+                String key = reference.push().getKey();
+                reference.child(key).setValue(mealDetailsMap)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "Meal details saved to Firebase successfully!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e(TAG, "Error saving meal details to Firebase:", e);
+                            }
+                        });
             }
         });
     }
