@@ -44,6 +44,7 @@ public class FavouriteMealsAdapter extends RecyclerView.Adapter<FavouriteMealsAd
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mealImageView=itemView.findViewById(R.id.saved_meal_image_view);
+            deleteImageView=itemView.findViewById(R.id.delete_from_favourite_image_view);
         }
     }
 }
