@@ -39,7 +39,7 @@ public class MealsLocalDataSourceImpl implements MealsLocalDataSource {
     }
 
     @Override
-    public void deleteMeal(MealDetailsResponse.MealDetails mealDetails) {
-        mealDao.delete(mealDetails);
+    public Completable deleteMeal(MealDetailsResponse.MealDetails mealDetails) {
+       return mealDao.delete(mealDetails);
     }
 }

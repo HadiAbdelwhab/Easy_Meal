@@ -9,22 +9,26 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 
 public interface MealsRepository {
-    public void getAllCategories(NetworkCallBack.CategoriesCallBack categoriesCallBack);
+    void getAllCategories(NetworkCallBack.CategoriesCallBack categoriesCallBack);
 
-    public void getMealDetails(NetworkCallBack.MealDetailsCallBack mealDetailsCallBack, String idMeal);
+    void getMealDetails(NetworkCallBack.MealDetailsCallBack mealDetailsCallBack, String idMeal);
 
-    public void getAllAreas(NetworkCallBack.AreasCallBack areasCallBack);
+    void getAllAreas(NetworkCallBack.AreasCallBack areasCallBack);
 
-    public void getRandomMeal(NetworkCallBack.RandomMealCallBack randomMealCallBack);
+    void getRandomMeal(NetworkCallBack.RandomMealCallBack randomMealCallBack);
 
-    public void getMealsByCategory(NetworkCallBack.MealsByCategoryCallBack mealsByCategoryCallBack
+    void getMealsByCategory(NetworkCallBack.MealsByCategoryCallBack mealsByCategoryCallBack
             , String categoryName);
 
-    public void getMealsByArea(NetworkCallBack.MealsByAreaCallBack mealsByAreaCallBack
+    void getMealsByArea(NetworkCallBack.MealsByAreaCallBack mealsByAreaCallBack
             , String areaName);
-    public void getIngredients(NetworkCallBack.IngredientsCallBack ingredientsCallBack);
+
+    void getIngredients(NetworkCallBack.IngredientsCallBack ingredientsCallBack);
+
     //local_methods
-    public Completable insertMeal(MealDetailsResponse.MealDetails mealDetails);
-    public void deleteMeal(MealDetailsResponse.MealDetails mealDetails);
-    public Flowable<List<MealDetailsResponse.MealDetails>> getSavedMeals();
+    Completable insertMeal(MealDetailsResponse.MealDetails mealDetails);
+
+    Completable deleteMeal(MealDetailsResponse.MealDetails mealDetails);
+
+    Flowable<List<MealDetailsResponse.MealDetails>> getFavouriteMeals();
 }

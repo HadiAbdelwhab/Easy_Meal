@@ -20,6 +20,6 @@ public interface MealDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     Completable insertMeal(MealDetailsResponse.MealDetails mealDetails);
     @Delete
-    void delete(MealDetailsResponse.MealDetails mealDetails);
+    Completable delete(MealDetailsResponse.MealDetails mealDetails);
 
 }

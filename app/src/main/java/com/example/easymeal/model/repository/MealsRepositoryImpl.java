@@ -75,12 +75,12 @@ public class MealsRepositoryImpl implements MealsRepository {
     }
 
     @Override
-    public void deleteMeal(MealDetailsResponse.MealDetails mealDetails) {
-        localDataSource.deleteMeal(mealDetails);
+    public Completable deleteMeal(MealDetailsResponse.MealDetails mealDetails) {
+        return localDataSource.deleteMeal(mealDetails);
     }
 
     @Override
-    public Flowable<List<MealDetailsResponse.MealDetails>> getSavedMeals() {
+    public Flowable<List<MealDetailsResponse.MealDetails>> getFavouriteMeals() {
         return localDataSource.getFavouriteMeals();
     }
 }
