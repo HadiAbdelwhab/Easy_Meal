@@ -16,6 +16,7 @@ public class MealDetailsResponse {
     public List<MealDetails> getMeals() {
         return meals;
     }
+
     @Entity(tableName = "meals")
     public static class MealDetails {
         @PrimaryKey
@@ -66,6 +67,14 @@ public class MealDetailsResponse {
         @SerializedName("strImageSource")
         private String strImageSource;
 
+        public MealDetails(String mealId, String mealName, String mealImage) {
+            this.idMeal = mealId;
+            this.mealName = mealName;
+            this.mealThumb = mealImage;
+        }
+
+        public MealDetails() {
+        }
 
         public String getIdMeal() {
             return idMeal;

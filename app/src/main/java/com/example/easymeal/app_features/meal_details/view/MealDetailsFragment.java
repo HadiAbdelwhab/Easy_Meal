@@ -1,5 +1,7 @@
 package com.example.easymeal.app_features.meal_details.view;
 
+import static com.example.easymeal.util.Constants.USER_ID_KEY;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -106,8 +108,10 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 }
                 presenter.insertMeal(mealDetails);
                 Map<String, Object> mealDetailsMap = new HashMap<>();
+                mealDetailsMap.put("userId",getActivity().getIntent().getStringExtra(USER_ID_KEY));
                 mealDetailsMap.put("mealId", mealDetails.getIdMeal());
                 mealDetailsMap.put("mealName", mealDetails.getMealName());
+                mealDetailsMap.put("mealImage",mealDetails.getMealThumb());
 
                 String key = reference.push().getKey();
                 reference.child(key).setValue(mealDetailsMap)
@@ -144,7 +148,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         ingredients.add(mealDetails.getIngredient3());
         ingredients.add(mealDetails.getIngredient4());
         ingredients.add(mealDetails.getIngredient5());
-        Log.i(TAG, "showMealDetails: "+ingredients);
+        Log.i(TAG, "showMealDetails: " + ingredients);
         setIngredientsRecyclerView();
         adapter = new IngredientAdapter(ingredients, getActivity());
         ingredientsRecyclerView.setAdapter(adapter);

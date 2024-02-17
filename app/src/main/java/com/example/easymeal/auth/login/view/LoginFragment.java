@@ -1,5 +1,6 @@
 package com.example.easymeal.auth.login.view;
 
+import static com.example.easymeal.util.Constants.USER_ID_KEY;
 import static com.example.easymeal.util.Constants.USER_NAME_KEY;
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
@@ -23,6 +24,13 @@ import android.widget.Toast;
 import com.example.easymeal.R;
 import com.example.easymeal.app_features.MainActivity;
 import com.example.easymeal.auth.AuthenticationActivity;
+import com.example.easymeal.auth.login.presenter.LoginPresenter;
+import com.example.easymeal.auth.login.presenter.LoginPresenterImpl;
+import com.example.easymeal.database.MealsLocalDataSourceImpl;
+import com.example.easymeal.model.pojo.Meal;
+import com.example.easymeal.model.pojo.MealDetailsResponse;
+import com.example.easymeal.model.repository.MealsRepositoryImpl;
+import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -55,7 +63,10 @@ public class LoginFragment extends Fragment {
     private FirebaseAuth auth;
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient mGoogleSignInClient;
-
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private LoginPresenter presenter;
+    private String userId;
+    //private DatabaseReference reference = database.getReference("favourites");
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -76,7 +87,8 @@ public class LoginFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         initView(view);
         setListeners();
-
+        presenter=new LoginPresenterImpl( MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
+                MealsLocalDataSourceImpl.getInstance(getActivity())));
 
     }
 
@@ -121,8 +133,10 @@ public class LoginFragment extends Fragment {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d(TAG, "signInWithEmail:success");
                                     FirebaseUser user = auth.getCurrentUser();
+                                    userId=user.getUid();
                                     if (user != null) {
                                         // Fetch user's name from the database
+                                        retrieveFavouriteMeals(user.getUid());
                                         fetchAndNavigateToMain(user.getUid());
                                     }
                                 } else {
@@ -202,6 +216,8 @@ public class LoginFragment extends Fragment {
                     String userName = snapshot.getValue(String.class);
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.putExtra(USER_NAME_KEY, userName);
+                    intent.putExtra(USER_ID_KEY, userId); // Add this line to pass the userId
+                    Log.i(TAG, "onDataChange: "+userId);
                     startActivity(intent);
                     getActivity().finish();
                 }
@@ -211,6 +227,47 @@ public class LoginFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
                 // Handle database error if any
                 Log.e(TAG, "Error fetching user's name from database:", error.toException());
+            }
+        });
+    }
+
+// Add this method in your MealDetailsFragment class or create a new class to handle Firebase data retrieval
+
+    private void retrieveFavouriteMeals(String userId) {
+        DatabaseReference favouritesRef = database.getReference("favourites");
+
+        favouritesRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot mealSnapshot : dataSnapshot.getChildren()) {
+                        String mealId = mealSnapshot.child("mealId").getValue(String.class);
+                        String mealName = mealSnapshot.child("mealName").getValue(String.class);
+                        String mealImage = mealSnapshot.child("mealImage").getValue(String.class);
+
+                        // Check if "mealImage" is null and retrieve it from the "mealDetails" node
+                        if (mealImage == null) {
+                            String mealDetailsId = mealSnapshot.getKey();
+                            DataSnapshot mealDetailsSnapshot = dataSnapshot.child(mealDetailsId);
+                            mealImage = mealDetailsSnapshot.child("mealImage").getValue(String.class);
+                        }
+
+                        // Create a Meal object and pass it to the insertMeal method
+                        MealDetailsResponse.MealDetails meal = new MealDetailsResponse.MealDetails(mealId, mealName, mealImage);
+                        presenter.insertMeal(meal);
+
+                        Log.d(TAG, "Favourite Meal ID: " + mealId);
+                        Log.d(TAG, "Favourite Meal Name: " + mealName);
+                        Log.d(TAG, "Favourite Meal Image: " + mealImage);
+                    }
+                } else {
+                    Log.d(TAG, "No favourite meals found for user with ID: " + userId);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error retrieving favourite meals from Firebase: " + databaseError.getMessage());
             }
         });
     }
