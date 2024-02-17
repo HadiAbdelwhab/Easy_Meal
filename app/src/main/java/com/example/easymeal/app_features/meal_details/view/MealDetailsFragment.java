@@ -5,7 +5,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +21,15 @@ import com.example.easymeal.app_features.meal_details.presenter.MealDetailsPrese
 import com.example.easymeal.app_features.meal_details.presenter.MealDetailsPresenterImpl;
 import com.example.easymeal.R;
 import com.example.easymeal.database.MealsLocalDataSourceImpl;
+import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
@@ -34,6 +41,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private YouTubePlayerView youTubePlayerView;
     private Button addToFavouriteButton;
     private MealDetailsResponse.MealDetails mealDetails;
+    private RecyclerView ingredientsRecyclerView;
+    private IngredientAdapter adapter;
 
     public MealDetailsFragment() {
         // Required empty public constructor
@@ -68,6 +77,14 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         areaTextView = view.findViewById(R.id.area_text_view);
         youTubePlayerView = view.findViewById(R.id.youtube_player_view);
         addToFavouriteButton = view.findViewById(R.id.add_favourite_button);
+        ingredientsRecyclerView = view.findViewById(R.id.ingredients_recycler_view);
+    }
+
+    private void setIngredientsRecyclerView() {
+        ingredientsRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        manager.setOrientation(RecyclerView.HORIZONTAL);
+        ingredientsRecyclerView.setLayoutManager(manager);
     }
 
     private void setListeners() {
@@ -90,12 +107,34 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 .into(mealImageView);
         maelNameTextView.setText(mealDetails.getMealName());
         instructionsTextView.setText(mealDetails.getInstructions());
+        List<String> ingredients = new ArrayList<>();
 
+        ingredients.add(mealDetails.getIngredient1());
+        ingredients.add(mealDetails.getIngredient2());
+        ingredients.add(mealDetails.getIngredient3());
+        ingredients.add(mealDetails.getIngredient4());
+        ingredients.add(mealDetails.getIngredient5());
+        Log.i(TAG, "showMealDetails: "+ingredients);
+        setIngredientsRecyclerView();
+        adapter = new IngredientAdapter(ingredients, getActivity());
+        ingredientsRecyclerView.setAdapter(adapter);
 
     }
 
     @Override
     public void showErrorMessage(String errorMessage) {
+
+    }
+
+    @Override
+    public void showIngredients(IngredientsResponse ingredientsResponse) {
+        /*setIngredientsRecyclerView();
+        adapter=new IngredientAdapter(ingredientsResponse.getIngredientsList(),getActivity());
+        ingredientsRecyclerView.setAdapter(adapter);*/
+    }
+
+    @Override
+    public void showIngredientsErrorMessage(String errorMessage) {
 
     }
 

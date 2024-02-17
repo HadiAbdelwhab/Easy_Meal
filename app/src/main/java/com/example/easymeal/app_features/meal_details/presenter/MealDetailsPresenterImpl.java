@@ -4,6 +4,7 @@ package com.example.easymeal.app_features.meal_details.presenter;
 import android.util.Log;
 
 import com.example.easymeal.app_features.meal_details.view.MealDetailsView;
+import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.repository.MealsRepository;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.network.meals.NetworkCallBack;
@@ -16,7 +17,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 
-public class MealDetailsPresenterImpl implements MealDetailsPresenter, NetworkCallBack.MealDetailsCallBack {
+public class MealDetailsPresenterImpl implements MealDetailsPresenter, NetworkCallBack.MealDetailsCallBack, NetworkCallBack.IngredientsCallBack {
     private static final String TAG = "MealDetailsPresenterImpl";
     private MealDetailsView view;
     private MealsRepository repository;
@@ -28,7 +29,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter, NetworkCa
 
     @Override
     public void getMealDetailsById(String mealId) {
-        repository.getMealDetails(this, mealId);
+        repository.getMealDetailsById(this, mealId);
 
     }
 
@@ -57,6 +58,11 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter, NetworkCa
     }
 
     @Override
+    public void getMealIngredients() {
+        repository.getIngredients(this);
+    }
+
+    @Override
     public void onSuccessMealDetails(MealDetailsResponse mealDetailsResponse) {
         view.showMealDetails(mealDetailsResponse);
     }
@@ -64,5 +70,15 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter, NetworkCa
     @Override
     public void onFailMealDetails(String errorMessage) {
         view.showErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void onSuccessIngredients(IngredientsResponse ingredientsResponse) {
+        view.showIngredients(ingredientsResponse);
+    }
+
+    @Override
+    public void onFailIngredients(String errorMessage) {
+        view.showIngredientsErrorMessage(errorMessage);
     }
 }

@@ -3,7 +3,8 @@ package com.example.easymeal.network.meals;
 import static com.example.easymeal.util.Constants.BASE_URL;
 
 import android.content.Context;
-import android.util.Log;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
@@ -16,12 +17,12 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -33,13 +34,34 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
 
 
     private MealsRemoteDataSourceImpl(Context context) {
+        int cacheSize =10*1024*1024;
+        Cache cache = new Cache(context.getCacheDir(), cacheSize);
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .cache(cache)
+                .addInterceptor(chain -> {
+                    Request request = chain.request();
+                    if (isNetworkAvailable(context)) {
+                        request = request.newBuilder().header("Cache-Control", "public, max-age=" + 60).build(); // Adjust cache duration as needed
+                    } else {
+                        request = request.newBuilder().header("Cache-Control", "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7).build(); // Adjust cache duration as needed
+                    }
+                    return chain.proceed(request);
+                }).build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                .client(okHttpClient)
                 .build();
 
         service = retrofit.create(MealsService.class);
+    }
+    private boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     public static synchronized MealsRemoteDataSourceImpl getInstance(Context context) {
@@ -52,7 +74,7 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
 
     @Override
     public void getCategories(NetworkCallBack.CategoriesCallBack categoriesCallBack) {
-        Observable<CategoryResponse> observable=service.getAllCategories();
+        Observable<CategoryResponse> observable = service.getAllCategories();
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CategoryResponse>() {
@@ -77,111 +99,146 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
 
                     }
                 });
-        /*Call<CategoryResponse> mealCategoryCall = service.getAllCategories();
-        mealCategoryCall.enqueue(new Callback<CategoryResponse>() {
-            @Override
-            public void onResponse(Call<CategoryResponse> call, Response<CategoryResponse> response) {
-                categoriesCallBack.onSuccessResult(response.body());
-                Log.i(TAG, "onResponse: " + response.body());
-            }
 
-            @Override
-            public void onFailure(Call<CategoryResponse> call, Throwable t) {
-                categoriesCallBack.onFailure(t.getMessage());
-            }
-        });*/
     }
 
     @Override
-    public void getMealDetails(NetworkCallBack.MealDetailsCallBack mealDetailsCallBack,
-                               String mealId) {
-        Call<MealDetailsResponse> mealDetailsResponseCall = service.getMealDetailsById(mealId);
-        mealDetailsResponseCall.enqueue(new Callback<MealDetailsResponse>() {
-            @Override
-            public void onResponse(Call<MealDetailsResponse> call, Response<MealDetailsResponse> response) {
-                mealDetailsCallBack.onSuccessMealDetails(response.body());
-            }
+    public void getMealDetails(NetworkCallBack.MealDetailsCallBack mealDetailsCallBack, String mealId) {
+        Observable<MealDetailsResponse> observable = service.getMealDetailsById(mealId);
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MealDetailsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-            @Override
-            public void onFailure(Call<MealDetailsResponse> call, Throwable t) {
-                mealDetailsCallBack.onFailMealDetails(t.getMessage());
-            }
-        });
+                    @Override
+                    public void onNext(@NonNull MealDetailsResponse mealDetailsResponse) {
+                        mealDetailsCallBack.onSuccessMealDetails(mealDetailsResponse);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        mealDetailsCallBack.onFailMealDetails(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     @Override
     public void getAllAreas(NetworkCallBack.AreasCallBack areasCallBack) {
-        Call<AreaListResponse> areaListResponseCall = service.getAllAreas();
-        areaListResponseCall.enqueue(new Callback<AreaListResponse>() {
-            @Override
-            public void onResponse(Call<AreaListResponse> call, Response<AreaListResponse> response) {
-                areasCallBack.onSuccessAreaCallBack(response.body());
-            }
+        Observable<AreaListResponse> observable = service.getAllAreas();
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<AreaListResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-            @Override
-            public void onFailure(Call<AreaListResponse> call, Throwable t) {
-                areasCallBack.onFailAreaCallBack(t.getMessage());
-            }
-        });
+                    @Override
+                    public void onNext(@NonNull AreaListResponse areaListResponse) {
+                        areasCallBack.onSuccessAreaCallBack(areaListResponse);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        areasCallBack.onFailAreaCallBack(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     @Override
     public void getRandomMeal(NetworkCallBack.RandomMealCallBack randomMealCallBack) {
-        Call<MealDetailsResponse> randomMeal = service.getRandomMeal();
-        randomMeal.enqueue(new Callback<MealDetailsResponse>() {
-            @Override
-            public void onResponse(Call<MealDetailsResponse> call, Response<MealDetailsResponse> response) {
-                randomMealCallBack.onSuccessRandomMeal(response.body());
-            }
+        Observable<MealDetailsResponse> observable = service.getRandomMeal();
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MealDetailsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-            @Override
-            public void onFailure(Call<MealDetailsResponse> call, Throwable t) {
-                randomMealCallBack.onFailRandomMeal(t.getMessage());
-            }
-        });
+                    @Override
+                    public void onNext(@NonNull MealDetailsResponse mealDetailsResponse) {
+                        randomMealCallBack.onSuccessRandomMeal(mealDetailsResponse);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        randomMealCallBack.onFailRandomMeal(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     @Override
-    public void getMealsByCategory(NetworkCallBack.MealsByCategoryCallBack mealsByCategoryCallBack,
-                                   String categoryName) {
-        Call<MealsResponse> mealByCategory = service.getMealsByCategory(categoryName);
-        mealByCategory.enqueue(new Callback<MealsResponse>() {
-            @Override
-            public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
-                mealsByCategoryCallBack.onSuccessMealsByCategory(response.body());
-            }
+    public void getMealsByCategory(NetworkCallBack.MealsByCategoryCallBack mealsByCategoryCallBack, String categoryName) {
+        Observable<MealsResponse> observable = service.getMealsByCategory(categoryName);
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MealsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-            @Override
-            public void onFailure(Call<MealsResponse> call, Throwable t) {
-                mealsByCategoryCallBack.onFailMealsByCategory(t.getMessage());
+                    @Override
+                    public void onNext(@NonNull MealsResponse mealsResponse) {
+                        mealsByCategoryCallBack.onSuccessMealsByCategory(mealsResponse);
+                    }
 
-            }
-        });
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        mealsByCategoryCallBack.onFailMealsByCategory(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     @Override
-    public void getMealsByArea(NetworkCallBack.MealsByAreaCallBack mealsByAreaCallBack,
-                               String areaName) {
-        Call<MealsResponse> mealsResponseCall = service.getMealsByArea(areaName);
-        mealsResponseCall.enqueue(new Callback<MealsResponse>() {
-            @Override
-            public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
-                mealsByAreaCallBack.onSuccessMealsByArea(response.body());
-            }
+    public void getMealsByArea(NetworkCallBack.MealsByAreaCallBack mealsByAreaCallBack, String areaName) {
+        Observable<MealsResponse> observable = service.getMealsByArea(areaName);
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MealsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-            @Override
-            public void onFailure(Call<MealsResponse> call, Throwable t) {
-                mealsByAreaCallBack.onFailMealsByArea(t.getMessage());
-            }
-        });
+                    @Override
+                    public void onNext(@NonNull MealsResponse mealsResponse) {
+                        mealsByAreaCallBack.onSuccessMealsByArea(mealsResponse);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        mealsByAreaCallBack.onFailMealsByArea(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+
 
     }
 
     @Override
     public void getIngredients(NetworkCallBack.IngredientsCallBack ingredientsCallBack) {
-        Observable<IngredientsResponse> observable=service.getIngredients();
+        Observable<IngredientsResponse> observable = service.getIngredients();
 
-                observable.subscribeOn(Schedulers.io())
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<IngredientsResponse>() {
                     @Override
@@ -207,17 +264,5 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
                 });
 
 
-        /*Call<IngredientsResponse>responseCall= service.getIngredients();
-        responseCall.enqueue(new Callback<IngredientsResponse>() {
-            @Override
-            public void onResponse(Call<IngredientsResponse> call, Response<IngredientsResponse> response) {
-                ingredientsCallBack.onSuccessIngredients(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<IngredientsResponse> call, Throwable t) {
-                ingredientsCallBack.onFailIngredients(t.getMessage());
-            }
-        });*/
     }
 }

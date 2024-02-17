@@ -1,6 +1,5 @@
 package com.example.easymeal.network.meals;
 
-
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
 import com.example.easymeal.model.pojo.IngredientsResponse;
@@ -8,29 +7,29 @@ import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.pojo.MealsResponse;
 
 import io.reactivex.rxjava3.core.Observable;
-import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface MealsService {
 
-    @GET("categories.php")
-    public Observable<CategoryResponse> getAllCategories();
+    @GET("api/json/v1/1/categories.php")
+    Observable<CategoryResponse> getAllCategories();
 
-    @GET("lookup.php")
-    Call<MealDetailsResponse> getMealDetailsById(@Query("i") String mealId);
+    @GET("api/json/v1/1/lookup.php")
+    Observable<MealDetailsResponse> getMealDetailsById(@Query("i") String mealId);
 
-    @GET("list.php?a=list")
-    Call<AreaListResponse> getAllAreas();
+    @GET("api/json/v1/1/list.php?a=list")
+    Observable<AreaListResponse> getAllAreas();
 
-    @GET("random.php")
-    Call<MealDetailsResponse> getRandomMeal();
+    @GET("api/json/v1/1/random.php")
+    Observable<MealDetailsResponse> getRandomMeal();
 
-    @GET("filter.php")
-    Call<MealsResponse> getMealsByCategory(@Query("c") String categoryName);
+    @GET("api/json/v1/1/filter.php")
+    Observable<MealsResponse> getMealsByCategory(@Query("c") String categoryName);
 
-    @GET("filter.php")
-    Call<MealsResponse> getMealsByArea(@Query("a") String areaName);
-    @GET("list.php?i=list")
+    @GET("api/json/v1/1/filter.php")
+    Observable<MealsResponse> getMealsByArea(@Query("a") String areaName);
+
+    @GET("api/json/v1/1/list.php?i=list")
     Observable<IngredientsResponse> getIngredients();
 }

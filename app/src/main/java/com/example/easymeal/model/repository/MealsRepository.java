@@ -11,7 +11,7 @@ import io.reactivex.rxjava3.core.Flowable;
 public interface MealsRepository {
     void getAllCategories(NetworkCallBack.CategoriesCallBack categoriesCallBack);
 
-    void getMealDetails(NetworkCallBack.MealDetailsCallBack mealDetailsCallBack, String idMeal);
+    void getMealDetailsById(NetworkCallBack.MealDetailsCallBack mealDetailsCallBack, String idMeal);
 
     void getAllAreas(NetworkCallBack.AreasCallBack areasCallBack);
 
