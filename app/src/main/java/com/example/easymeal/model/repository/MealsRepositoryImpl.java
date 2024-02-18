@@ -88,4 +88,9 @@ public class MealsRepositoryImpl implements MealsRepository {
     public Flowable<List<MealDetailsResponse.MealDetails>> getFavouriteMeals() {
         return localDataSource.getFavouriteMeals();
     }
+
+    @Override
+    public Completable truncateMeals() {
+        return localDataSource.truncateMeals();
+    }
 }

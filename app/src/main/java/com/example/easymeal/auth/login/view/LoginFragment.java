@@ -23,11 +23,9 @@ import android.widget.Toast;
 
 import com.example.easymeal.R;
 import com.example.easymeal.app_features.MainActivity;
-import com.example.easymeal.auth.AuthenticationActivity;
 import com.example.easymeal.auth.login.presenter.LoginPresenter;
 import com.example.easymeal.auth.login.presenter.LoginPresenterImpl;
 import com.example.easymeal.database.MealsLocalDataSourceImpl;
-import com.example.easymeal.model.pojo.Meal;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
@@ -65,8 +63,7 @@ public class LoginFragment extends Fragment {
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private LoginPresenter presenter;
-    private String userId;
-    //private DatabaseReference reference = database.getReference("favourites");
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -133,7 +130,7 @@ public class LoginFragment extends Fragment {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d(TAG, "signInWithEmail:success");
                                     FirebaseUser user = auth.getCurrentUser();
-                                    userId=user.getUid();
+
                                     if (user != null) {
                                         // Fetch user's name from the database
                                         retrieveFavouriteMeals(user.getUid());

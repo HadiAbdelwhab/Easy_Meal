@@ -34,4 +34,5 @@ public interface MealsRepository {
     Completable deleteMeal(MealDetailsResponse.MealDetails mealDetails);
 
     Flowable<List<MealDetailsResponse.MealDetails>> getFavouriteMeals();
+    Completable truncateMeals();
 }

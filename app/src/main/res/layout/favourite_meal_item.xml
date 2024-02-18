@@ -37,7 +37,7 @@
             android:id="@+id/saved_meal_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#6B6E73"
+            android:background="#74000000"
             android:paddingStart="12dp"
             android:textColor="@color/white"
             android:textSize="25dp"

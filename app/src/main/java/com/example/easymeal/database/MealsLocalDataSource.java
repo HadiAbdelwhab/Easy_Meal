@@ -12,4 +12,5 @@ public interface MealsLocalDataSource {
     Flowable<List<MealDetailsResponse.MealDetails>> getFavouriteMeals();
     Completable insertMeal(MealDetailsResponse.MealDetails mealDetails);
     Completable deleteMeal(MealDetailsResponse.MealDetails mealDetails);
+    Completable truncateMeals();
 }

@@ -42,4 +42,9 @@ public class MealsLocalDataSourceImpl implements MealsLocalDataSource {
     public Completable deleteMeal(MealDetailsResponse.MealDetails mealDetails) {
        return mealDao.delete(mealDetails);
     }
+
+    @Override
+    public Completable truncateMeals() {
+        return mealDao.truncateMeals();
+    }
 }

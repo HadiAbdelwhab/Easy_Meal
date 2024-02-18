@@ -21,5 +21,7 @@ public interface MealDao {
     Completable insertMeal(MealDetailsResponse.MealDetails mealDetails);
     @Delete
     Completable delete(MealDetailsResponse.MealDetails mealDetails);
+    @Query("DELETE FROM meals")
+    Completable truncateMeals();
 
 }

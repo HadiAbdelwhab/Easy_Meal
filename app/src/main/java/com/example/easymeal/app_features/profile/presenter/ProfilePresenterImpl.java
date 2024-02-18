@@ -1,8 +1,7 @@
-package com.example.easymeal.auth.login.presenter;
+package com.example.easymeal.app_features.profile.presenter;
 
 import android.util.Log;
 
-import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepository;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -11,17 +10,17 @@ import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class LoginPresenterImpl implements LoginPresenter{
-    private static final String TAG = "LoginPresenterImpl";
+public class ProfilePresenterImpl implements ProfilePresenter{
+    private static final String TAG = "ProfilePresenterImpl";
     private MealsRepository repository;
 
-    public LoginPresenterImpl( MealsRepository repository) {
+    public ProfilePresenterImpl(MealsRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public void insertMeal(MealDetailsResponse.MealDetails mealDetails) {
-        repository.insertMeal(mealDetails)
+    public void truncateMeals() {
+        repository.truncateMeals()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new CompletableObserver() {
@@ -32,12 +31,12 @@ public class LoginPresenterImpl implements LoginPresenter{
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "onComplete: inserted meal to database");
+                        Log.i(TAG, "onComplete: meals truncated");
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        Log.i(TAG, "onError: could not insert meal");
+
                     }
                 });
     }
