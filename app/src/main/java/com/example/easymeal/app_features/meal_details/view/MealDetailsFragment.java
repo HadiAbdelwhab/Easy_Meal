@@ -32,6 +32,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import java.util.ArrayList;
@@ -89,6 +91,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         youTubePlayerView = view.findViewById(R.id.youtube_player_view);
         addToFavouriteButton = view.findViewById(R.id.add_favourite_button);
         ingredientsRecyclerView = view.findViewById(R.id.ingredients_recycler_view);
+        getLifecycle().addObserver(youTubePlayerView);
+
     }
 
     private void setIngredientsRecyclerView() {
@@ -152,6 +156,12 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         setIngredientsRecyclerView();
         adapter = new IngredientAdapter(ingredients, getActivity());
         ingredientsRecyclerView.setAdapter(adapter);
+        youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                youTubePlayer.cueVideo(mealDetails.getYoutubeURL(),0);
+            }
+        });
 
     }
 

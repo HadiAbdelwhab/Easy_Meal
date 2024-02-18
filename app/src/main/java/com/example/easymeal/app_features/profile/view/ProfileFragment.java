@@ -22,6 +22,7 @@ import com.example.easymeal.auth.AuthenticationActivity;
 import com.example.easymeal.database.MealsLocalDataSourceImpl;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
+import com.example.easymeal.util.SharedPreferencesManager;
 
 
 public class ProfileFragment extends Fragment {
@@ -29,6 +30,7 @@ public class ProfileFragment extends Fragment {
     private TextView nameTextView;
     private Button logoutButton;
     private ProfilePresenter presenter;
+    private SharedPreferencesManager prefManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,6 +42,8 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
+        prefManager = new SharedPreferencesManager(requireContext());
+
         presenter=new ProfilePresenterImpl( MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
                 MealsLocalDataSourceImpl.getInstance(getActivity())));
         String name=getActivity().getIntent().getStringExtra(USER_NAME_KEY);
@@ -52,6 +56,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 presenter.truncateMeals();
+                prefManager.setLoggedIn(false);
                 Intent logoutIntent=new Intent(getActivity(), AuthenticationActivity.class);
                 startActivity(logoutIntent);
                 getActivity().finish();
