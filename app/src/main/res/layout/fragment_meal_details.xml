@@ -83,5 +83,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/youtube_player_view" />
+        <Button
+            android:id="@+id/add_plan_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/add_to_plan_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_favourite_button" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

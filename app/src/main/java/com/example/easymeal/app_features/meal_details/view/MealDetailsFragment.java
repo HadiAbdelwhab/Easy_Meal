@@ -1,7 +1,10 @@
 package com.example.easymeal.app_features.meal_details.view;
 
+import static com.example.easymeal.util.Constants.FAVOURITE_KEY;
+import static com.example.easymeal.util.Constants.PLAN_KEY;
 import static com.example.easymeal.util.Constants.USER_ID_KEY;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,8 +18,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.easymeal.app_features.meal_details.presenter.MealDetailsPresenter;
@@ -29,7 +34,6 @@ import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -37,6 +41,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +54,11 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private ImageView mealImageView;
     private TextView maelNameTextView, instructionsTextView, areaTextView;
     private YouTubePlayerView youTubePlayerView;
-    private Button addToFavouriteButton;
+    private Button addToFavouriteButton, addToPlanButton;
     private MealDetailsResponse.MealDetails mealDetails;
     private RecyclerView ingredientsRecyclerView;
     private IngredientAdapter adapter;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference reference = database.getReference("favourites");
 
 
     public MealDetailsFragment() {
@@ -90,6 +94,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         areaTextView = view.findViewById(R.id.area_text_view);
         youTubePlayerView = view.findViewById(R.id.youtube_player_view);
         addToFavouriteButton = view.findViewById(R.id.add_favourite_button);
+        addToPlanButton = view.findViewById(R.id.add_plan_button);
         ingredientsRecyclerView = view.findViewById(R.id.ingredients_recycler_view);
         getLifecycle().addObserver(youTubePlayerView);
 
@@ -106,33 +111,117 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         addToFavouriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mealDetails == null) {
-                    Log.e(TAG, "mealDetails object is null, cannot save to Firebase");
-                    return;
-                }
-                presenter.insertMeal(mealDetails);
-                Map<String, Object> mealDetailsMap = new HashMap<>();
-                mealDetailsMap.put("userId",getActivity().getIntent().getStringExtra(USER_ID_KEY));
-                mealDetailsMap.put("mealId", mealDetails.getIdMeal());
-                mealDetailsMap.put("mealName", mealDetails.getMealName());
-                mealDetailsMap.put("mealImage",mealDetails.getMealThumb());
+                saveMeal(mealDetails, FAVOURITE_KEY);
 
-                String key = reference.push().getKey();
-                reference.child(key).setValue(mealDetailsMap)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "Meal details saved to Firebase successfully!");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e(TAG, "Error saving meal details to Firebase:", e);
-                            }
-                        });
             }
         });
+        addToPlanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+
+            }
+        });
+    }
+
+    private void saveMeal(MealDetailsResponse.MealDetails mealDetails, String databaseKey) {
+        DatabaseReference reference = database.getReference(databaseKey);
+
+        if (mealDetails == null) {
+            Log.e(TAG, "mealDetails object is null, cannot save to Firebase");
+            return;
+        }
+        mealDetails.setDatabaseKey(databaseKey);
+        mealDetails.setPlanDate("0");
+        presenter.insertMeal(mealDetails);
+        Map<String, Object> mealDetailsMap = new HashMap<>();
+        mealDetailsMap.put("userId", getActivity().getIntent().getStringExtra(USER_ID_KEY));
+        mealDetailsMap.put("mealId", mealDetails.getIdMeal());
+        mealDetailsMap.put("mealName", mealDetails.getMealName());
+        mealDetailsMap.put("mealImage", mealDetails.getMealThumb());
+        mealDetailsMap.put("databaseKey", mealDetails.getDatabaseKey());
+        mealDetailsMap.put("date", mealDetails.getPlanDate());
+
+        String key = reference.push().getKey();
+        reference.child(key).setValue(mealDetailsMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Meal details saved to Firebase successfully!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Error saving meal details to Firebase:", e);
+                    }
+                });
+    }
+
+    private void showDatePickerDialog() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDayOfMonth) {
+                        // Handle the selected date
+                        // You can save the selected date to your plan or perform any other actions
+                        String selectedDate = selectedYear + "-" + (selectedMonth + 1) + "-" + selectedDayOfMonth;
+                        saveMealWithDate(mealDetails, PLAN_KEY, selectedDate);
+                    }
+                },
+                year,
+                month,
+                dayOfMonth
+        );
+
+        // Show the DatePickerDialog
+        datePickerDialog.show();
+    }
+
+    private void saveMealWithDate(MealDetailsResponse.MealDetails mealDetails, String planKey, String selectedDate) {
+
+        DatabaseReference reference = database.getReference(planKey);
+
+        if (mealDetails == null) {
+            Log.e(TAG, "mealDetails object is null, cannot save to Firebase");
+            return;
+        }
+        if (selectedDate == null) {
+
+            return;
+        }
+        mealDetails.setDatabaseKey(planKey);
+        mealDetails.setPlanDate(selectedDate);
+        presenter.insertMeal(mealDetails);
+        Map<String, Object> mealDetailsMap = new HashMap<>();
+        mealDetailsMap.put("userId", getActivity().getIntent().getStringExtra(USER_ID_KEY));
+        mealDetailsMap.put("mealId", mealDetails.getIdMeal());
+        mealDetailsMap.put("mealName", mealDetails.getMealName());
+        mealDetailsMap.put("mealImage", mealDetails.getMealThumb());
+        mealDetailsMap.put("databaseKey", mealDetails.getDatabaseKey());
+        mealDetailsMap.put("date", mealDetails.getPlanDate());
+
+        String key = reference.push().getKey();
+        reference.child(key).setValue(mealDetailsMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Meal details saved to Firebase successfully!");
+                        Toast.makeText(getActivity(), "Added to plan successfully", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Error saving meal details to Firebase:", e);
+                    }
+                });
     }
 
     @Override
@@ -144,6 +233,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 .placeholder(R.drawable.laod)
                 .into(mealImageView);
         maelNameTextView.setText(mealDetails.getMealName());
+        //areaTextView.setText("Area :"+mealDetails.getArea());
         instructionsTextView.setText(mealDetails.getInstructions());
         List<String> ingredients = new ArrayList<>();
 
@@ -159,7 +249,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
             @Override
             public void onReady(@NonNull YouTubePlayer youTubePlayer) {
-                youTubePlayer.cueVideo(mealDetails.getYoutubeURL(),0);
+                youTubePlayer.cueVideo(mealDetails.getYoutubeURL(), 0);
             }
         });
 

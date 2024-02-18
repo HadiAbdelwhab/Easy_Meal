@@ -34,6 +34,11 @@ public class MealsLocalDataSourceImpl implements MealsLocalDataSource {
     }
 
     @Override
+    public Flowable<List<MealDetailsResponse.MealDetails>> getPlanMeals() {
+        return mealDao.getPlanMeals();
+    }
+
+    @Override
     public Completable insertMeal(MealDetailsResponse.MealDetails mealDetails) {
         return mealDao.insertMeal(mealDetails);
     }

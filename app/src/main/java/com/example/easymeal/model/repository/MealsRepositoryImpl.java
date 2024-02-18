@@ -90,6 +90,11 @@ public class MealsRepositoryImpl implements MealsRepository {
     }
 
     @Override
+    public Flowable<List<MealDetailsResponse.MealDetails>> getPlanMeals() {
+        return localDataSource.getPlanMeals();
+    }
+
+    @Override
     public Completable truncateMeals() {
         return localDataSource.truncateMeals();
     }

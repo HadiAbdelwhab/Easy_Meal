@@ -15,8 +15,10 @@ import io.reactivex.rxjava3.core.Flowable;
 
 @Dao
 public interface MealDao {
-    @Query("SELECT * FROM meals")
+    @Query("SELECT * FROM meals Where databaseKey = 'favourite'")
     Flowable<List<MealDetailsResponse.MealDetails>> getFavouriteMeals();
+    @Query("SELECT * FROM meals Where databaseKey = 'plan'")
+    Flowable<List<MealDetailsResponse.MealDetails>> getPlanMeals();
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     Completable insertMeal(MealDetailsResponse.MealDetails mealDetails);
     @Delete

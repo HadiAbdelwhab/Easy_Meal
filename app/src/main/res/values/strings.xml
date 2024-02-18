@@ -26,4 +26,6 @@
     <string name="client_id">291040840405-28ppclmssq2vcjt7ctjs42v68gncbpvk.apps.googleusercontent.com</string>
     <string name="add_to_favourite_button">Add to Favourite</string>
     <string name="confirm_password_text_view">Confirm password</string>
+    <string name="join_as_guest_textview">Join as Guest</string>
+    <string name="add_to_plan_button">Add to plan</string>
 </resources>

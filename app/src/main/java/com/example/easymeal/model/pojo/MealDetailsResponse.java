@@ -19,6 +19,11 @@ public class MealDetailsResponse {
 
     @Entity(tableName = "meals")
     public static class MealDetails {
+        @NonNull
+        private String databaseKey;
+
+        @NonNull
+        private String planDate;
         @PrimaryKey
         @NonNull
         @SerializedName("idMeal")
@@ -74,6 +79,24 @@ public class MealDetailsResponse {
         }
 
         public MealDetails() {
+        }
+
+        @NonNull
+        public String getDatabaseKey() {
+            return databaseKey;
+        }
+
+        public void setDatabaseKey(@NonNull String databaseKey) {
+            this.databaseKey = databaseKey;
+        }
+
+        @NonNull
+        public String getPlanDate() {
+            return planDate;
+        }
+
+        public void setPlanDate(@NonNull String planDate) {
+            this.planDate = planDate;
         }
 
         public String getIdMeal() {

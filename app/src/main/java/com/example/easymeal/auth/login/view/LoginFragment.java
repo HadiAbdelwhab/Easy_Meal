@@ -59,7 +59,7 @@ public class LoginFragment extends Fragment {
     private TextInputEditText emailEdittext, passwordEditText;
     private Button loginButton;
     private SignInButton signInButtonGoogle;
-    private TextView registerTextView;
+    private TextView registerTextView, joinAsGuestTextView;
     private FirebaseAuth auth;
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient mGoogleSignInClient;
@@ -80,6 +80,7 @@ public class LoginFragment extends Fragment {
             if (currentUser != null) {
                 retrieveFavouriteMeals(currentUser.getUid());
                 fetchAndNavigateToMain(currentUser.getUid());
+                retrievePlanMeals(currentUser.getUid());
             }
         }
     }
@@ -100,7 +101,8 @@ public class LoginFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         initView(view);
         setListeners();
-        progressBar.setVisibility(View.INVISIBLE);
+
+
 
 
         prefManager = new SharedPreferencesManager(requireContext());
@@ -117,10 +119,25 @@ public class LoginFragment extends Fragment {
         loginButton = view.findViewById(R.id.login_button);
         signInButtonGoogle = view.findViewById(R.id.login_google_button);
         progressBar=view.findViewById(R.id.register_progress_bar);
+        joinAsGuestTextView=view.findViewById(R.id.join_as_guest_text_view);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        progressBar.setVisibility(View.GONE);
+    }
 
     public void setListeners() {
+        progressBar.setVisibility(View.GONE);
+        joinAsGuestTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
         signInButtonGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,6 +179,7 @@ public class LoginFragment extends Fragment {
                                     Log.w(TAG, "signInWithEmail:failure", task.getException());
                                     Toast.makeText(getActivity(), "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
+                                    progressBar.setVisibility(View.GONE);
                                 }
                             }
                         });
@@ -251,12 +269,49 @@ public class LoginFragment extends Fragment {
         });
     }
 
-// Add this method in your MealDetailsFragment class or create a new class to handle Firebase data retrieval
 
     private void retrieveFavouriteMeals(String userId) {
         DatabaseReference favouritesRef = database.getReference("favourites");
 
         favouritesRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot mealSnapshot : dataSnapshot.getChildren()) {
+                        String mealId = mealSnapshot.child("mealId").getValue(String.class);
+                        String mealName = mealSnapshot.child("mealName").getValue(String.class);
+                        String mealImage = mealSnapshot.child("mealImage").getValue(String.class);
+
+                        // Check if "mealImage" is null and retrieve it from the "mealDetails" node
+                        if (mealImage == null) {
+                            String mealDetailsId = mealSnapshot.getKey();
+                            DataSnapshot mealDetailsSnapshot = dataSnapshot.child(mealDetailsId);
+                            mealImage = mealDetailsSnapshot.child("mealImage").getValue(String.class);
+                        }
+
+                        // Create a Meal object and pass it to the insertMeal method
+                        MealDetailsResponse.MealDetails meal = new MealDetailsResponse.MealDetails(mealId, mealName, mealImage);
+                        presenter.insertMeal(meal);
+
+                        Log.d(TAG, "Favourite Meal ID: " + mealId);
+                        Log.d(TAG, "Favourite Meal Name: " + mealName);
+                        Log.d(TAG, "Favourite Meal Image: " + mealImage);
+                    }
+                } else {
+                    Log.d(TAG, "No favourite meals found for user with ID: " + userId);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error retrieving favourite meals from Firebase: " + databaseError.getMessage());
+            }
+        });
+    }
+    private void retrievePlanMeals(String userId){
+        DatabaseReference planRef = database.getReference("plan");
+
+        planRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
