@@ -1,5 +1,7 @@
 package com.example.easymeal.auth.login.view;
 
+import static com.example.easymeal.util.Constants.FAVOURITE_KEY;
+import static com.example.easymeal.util.Constants.PLAN_KEY;
 import static com.example.easymeal.util.Constants.USER_ID_KEY;
 import static com.example.easymeal.util.Constants.USER_NAME_KEY;
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
@@ -71,6 +73,7 @@ public class LoginFragment extends Fragment {
     public LoginFragment() {
         // Required empty public constructor
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -79,8 +82,8 @@ public class LoginFragment extends Fragment {
             FirebaseUser currentUser = auth.getCurrentUser();
             if (currentUser != null) {
                 retrieveFavouriteMeals(currentUser.getUid());
-                fetchAndNavigateToMain(currentUser.getUid());
                 retrievePlanMeals(currentUser.getUid());
+                fetchAndNavigateToMain(currentUser.getUid());
             }
         }
     }
@@ -103,11 +106,9 @@ public class LoginFragment extends Fragment {
         setListeners();
 
 
-
-
         prefManager = new SharedPreferencesManager(requireContext());
 
-        presenter=new LoginPresenterImpl( MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
+        presenter = new LoginPresenterImpl(MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
                 MealsLocalDataSourceImpl.getInstance(getActivity())));
 
     }
@@ -118,8 +119,8 @@ public class LoginFragment extends Fragment {
         passwordEditText = view.findViewById(R.id.password_text_field);
         loginButton = view.findViewById(R.id.login_button);
         signInButtonGoogle = view.findViewById(R.id.login_google_button);
-        progressBar=view.findViewById(R.id.register_progress_bar);
-        joinAsGuestTextView=view.findViewById(R.id.join_as_guest_text_view);
+        progressBar = view.findViewById(R.id.register_progress_bar);
+        joinAsGuestTextView = view.findViewById(R.id.join_as_guest_text_view);
     }
 
     @Override
@@ -184,7 +185,8 @@ public class LoginFragment extends Fragment {
                             }
                         });
             }
-        });        registerTextView.setOnClickListener(new View.OnClickListener() {
+        });
+        registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment);
@@ -244,6 +246,7 @@ public class LoginFragment extends Fragment {
             }
         }
     }
+
     private void fetchAndNavigateToMain(String userId) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(userId).child("name");
 
@@ -255,7 +258,7 @@ public class LoginFragment extends Fragment {
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.putExtra(USER_NAME_KEY, userName);
                     intent.putExtra(USER_ID_KEY, userId); // Add this line to pass the userId
-                    Log.i(TAG, "onDataChange: "+userId);
+                    Log.i(TAG, "onDataChange: " + userId);
                     startActivity(intent);
                     getActivity().finish();
                 }
@@ -271,7 +274,7 @@ public class LoginFragment extends Fragment {
 
 
     private void retrieveFavouriteMeals(String userId) {
-        DatabaseReference favouritesRef = database.getReference("favourites");
+        DatabaseReference favouritesRef = database.getReference(FAVOURITE_KEY);
 
         favouritesRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -282,15 +285,15 @@ public class LoginFragment extends Fragment {
                         String mealName = mealSnapshot.child("mealName").getValue(String.class);
                         String mealImage = mealSnapshot.child("mealImage").getValue(String.class);
 
-                        // Check if "mealImage" is null and retrieve it from the "mealDetails" node
                         if (mealImage == null) {
                             String mealDetailsId = mealSnapshot.getKey();
                             DataSnapshot mealDetailsSnapshot = dataSnapshot.child(mealDetailsId);
                             mealImage = mealDetailsSnapshot.child("mealImage").getValue(String.class);
                         }
 
-                        // Create a Meal object and pass it to the insertMeal method
                         MealDetailsResponse.MealDetails meal = new MealDetailsResponse.MealDetails(mealId, mealName, mealImage);
+                        meal.setPlanDate("0");
+                        meal.setDatabaseKey(FAVOURITE_KEY);
                         presenter.insertMeal(meal);
 
                         Log.d(TAG, "Favourite Meal ID: " + mealId);
@@ -308,7 +311,8 @@ public class LoginFragment extends Fragment {
             }
         });
     }
-    private void retrievePlanMeals(String userId){
+
+    private void retrievePlanMeals(String userId) {
         DatabaseReference planRef = database.getReference("plan");
 
         planRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -319,6 +323,7 @@ public class LoginFragment extends Fragment {
                         String mealId = mealSnapshot.child("mealId").getValue(String.class);
                         String mealName = mealSnapshot.child("mealName").getValue(String.class);
                         String mealImage = mealSnapshot.child("mealImage").getValue(String.class);
+                        String mealDate = mealSnapshot.child("date").getValue(String.class);
 
                         // Check if "mealImage" is null and retrieve it from the "mealDetails" node
                         if (mealImage == null) {
@@ -328,12 +333,14 @@ public class LoginFragment extends Fragment {
                         }
 
                         // Create a Meal object and pass it to the insertMeal method
-                        MealDetailsResponse.MealDetails meal = new MealDetailsResponse.MealDetails(mealId, mealName, mealImage);
+                        MealDetailsResponse.MealDetails meal = new MealDetailsResponse.MealDetails(mealId, mealName, mealImage, mealDate);
+
+                        meal.setDatabaseKey(PLAN_KEY);
                         presenter.insertMeal(meal);
 
-                        Log.d(TAG, "Favourite Meal ID: " + mealId);
-                        Log.d(TAG, "Favourite Meal Name: " + mealName);
-                        Log.d(TAG, "Favourite Meal Image: " + mealImage);
+                        Log.d(TAG, "PLan Meal ID: " + mealId);
+                        Log.d(TAG, "Plan Meal Name: " + mealName);
+                        Log.d(TAG, "Plan Meal Image: " + mealImage);
                     }
                 } else {
                     Log.d(TAG, "No favourite meals found for user with ID: " + userId);
@@ -342,7 +349,7 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(TAG, "Error retrieving favourite meals from Firebase: " + databaseError.getMessage());
+                Log.e(TAG, "Error retrieving plan meals from Firebase: " + databaseError.getMessage());
             }
         });
     }

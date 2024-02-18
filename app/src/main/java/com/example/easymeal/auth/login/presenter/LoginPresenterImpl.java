@@ -32,7 +32,7 @@ public class LoginPresenterImpl implements LoginPresenter{
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "onComplete: inserted meal to database");
+                        Log.i(TAG, "onComplete: favourite inserted meal to database");
                     }
 
                     @Override

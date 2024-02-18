@@ -34,8 +34,8 @@ public class MealsLocalDataSourceImpl implements MealsLocalDataSource {
     }
 
     @Override
-    public Flowable<List<MealDetailsResponse.MealDetails>> getPlanMeals() {
-        return mealDao.getPlanMeals();
+    public Flowable<List<MealDetailsResponse.MealDetails>> getPlanMeals(String date) {
+        return mealDao.getPlanMeals(date);
     }
 
     @Override

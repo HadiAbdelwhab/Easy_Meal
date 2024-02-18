@@ -28,4 +28,5 @@
     <string name="confirm_password_text_view">Confirm password</string>
     <string name="join_as_guest_textview">Join as Guest</string>
     <string name="add_to_plan_button">Add to plan</string>
+    <string name="choose_day_to_show_meal_button">Choose day to show meal</string>
 </resources>

@@ -23,8 +23,8 @@ public class PlanPresenterImpl implements PlanPresenter {
     }
 
     @Override
-    public void getPlanMeals() {
-        repository.getPlanMeals()
+    public void getPlanMeals(String date) {
+        repository.getPlanMeals(date)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(items -> view.showPlanMeals(items),

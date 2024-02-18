@@ -90,8 +90,8 @@ public class MealsRepositoryImpl implements MealsRepository {
     }
 
     @Override
-    public Flowable<List<MealDetailsResponse.MealDetails>> getPlanMeals() {
-        return localDataSource.getPlanMeals();
+    public Flowable<List<MealDetailsResponse.MealDetails>> getPlanMeals(String date) {
+        return localDataSource.getPlanMeals(date);
     }
 
     @Override
