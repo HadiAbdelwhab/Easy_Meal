@@ -8,12 +8,15 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
 
 import com.example.easymeal.R;
 import com.example.easymeal.auth.login.view.LoginFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class AuthenticationActivity extends AppCompatActivity {
     private NavController navController;
@@ -25,22 +28,21 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+       /* NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_auht);
 
-        navController = navHostFragment.getNavController();
-        /*FragmentManager manager = getSfupportFragmentManager();
+        navController = navHostFragment.getNavController();*/
 
-        if (savedInstanceState == null) {
+        /*navController = Navigation.findNavController(this, R.id.nav_host_fragment_auht);
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.loginFragment) {
+                controller.navigate(R.id.loginFragment);
+            }else if (destination.getId() == R.id.registerFragment){
+                controller.navigate(R.id.registerFragment);
+            }
 
-            loginFragment = new LoginFragment();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.add(R.id.fragment_authentication_container, loginFragment, LOGIN_FRAGMENT);
-            transaction.commit();
-        } else {
-
-            loginFragment = (LoginFragment) manager.findFragmentByTag(LOGIN_FRAGMENT);
-        }*/
+        });*/
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_auht);
 
 
     }

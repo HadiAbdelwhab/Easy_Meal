@@ -6,6 +6,7 @@ import static com.example.easymeal.util.Constants.USER_ID_KEY;
 import static com.example.easymeal.util.Constants.USER_NAME_KEY;
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -69,9 +70,23 @@ public class LoginFragment extends Fragment {
     private LoginPresenter presenter;
     private SharedPreferencesManager prefManager;
     private ProgressBar progressBar;
+    private Context context;
+
 
     public LoginFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.context= null;
     }
 
     @Override
@@ -108,8 +123,8 @@ public class LoginFragment extends Fragment {
 
         prefManager = new SharedPreferencesManager(requireContext());
 
-        presenter = new LoginPresenterImpl(MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
-                MealsLocalDataSourceImpl.getInstance(getActivity())));
+        presenter = new LoginPresenterImpl(MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(context),
+                MealsLocalDataSourceImpl.getInstance(context)));
 
     }
 
@@ -156,11 +171,11 @@ public class LoginFragment extends Fragment {
                 password = passwordEditText.getText().toString();
 
                 if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getActivity(), "Enter your email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Enter your email", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getActivity(), "Enter your password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Enter your password", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 auth.signInWithEmailAndPassword(email, password)
@@ -178,7 +193,7 @@ public class LoginFragment extends Fragment {
                                     }
                                 } else {
                                     Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(getActivity(), "Authentication failed.",
+                                    Toast.makeText(context, "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
                                     progressBar.setVisibility(View.GONE);
                                 }
@@ -210,7 +225,7 @@ public class LoginFragment extends Fragment {
                     } else {
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
                         // Handle sign-in failure, display a message to the user or retry
-                        Toast.makeText(getActivity(), "Google Sign-In Failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Google Sign-In Failed", Toast.LENGTH_SHORT).show();
                         progressBar.setVisibility(View.GONE);
 
                     }
@@ -223,7 +238,7 @@ public class LoginFragment extends Fragment {
                 .requestEmail()
                 .build();
 
-        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
     }
 
     @Override
@@ -253,14 +268,18 @@ public class LoginFragment extends Fragment {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
+                if (context != null && snapshot.exists()) {
                     String userName = snapshot.getValue(String.class);
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent intent = new Intent(context, MainActivity.class);
                     intent.putExtra(USER_NAME_KEY, userName);
-                    intent.putExtra(USER_ID_KEY, userId); // Add this line to pass the userId
+                    intent.putExtra(USER_ID_KEY, userId);
                     Log.i(TAG, "onDataChange: " + userId);
-                    startActivity(intent);
-                    getActivity().finish();
+
+                    // Check if the fragment is attached to the activity before starting the activity
+                    if (isAdded() && getActivity() != null) {
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
                 }
             }
 
@@ -314,7 +333,7 @@ public class LoginFragment extends Fragment {
 
     private void retrievePlanMeals(String userId) {
         DatabaseReference planRef = database.getReference("plan");
-
+        Log.i(TAG, "retrievePlanMeals: ");
         planRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -350,7 +369,9 @@ public class LoginFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e(TAG, "Error retrieving plan meals from Firebase: " + databaseError.getMessage());
+                databaseError.toException().printStackTrace();
             }
+
         });
     }
 
