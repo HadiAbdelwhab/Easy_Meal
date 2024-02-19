@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,16 +47,17 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     private MealDetailsPresenter presenter;
     private static final String TAG = "MealDetailsFragment";
-    private ImageView mealImageView;
+    private ImageView mealImageView, addToFavouriteImage, addToPlanImage;
     private TextView maelNameTextView, instructionsTextView, areaTextView;
     private YouTubePlayerView youTubePlayerView;
-    private Button addToFavouriteButton, addToPlanButton;
     private MealDetailsResponse.MealDetails mealDetails;
     private RecyclerView ingredientsRecyclerView;
     private IngredientAdapter adapter;
@@ -96,9 +98,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         instructionsTextView = view.findViewById(R.id.instruction_text_view);
         areaTextView = view.findViewById(R.id.area_text_view);
         youTubePlayerView = view.findViewById(R.id.youtube_player_view);
-        addToFavouriteButton = view.findViewById(R.id.add_favourite_button);
-        addToPlanButton = view.findViewById(R.id.add_plan_button);
         ingredientsRecyclerView = view.findViewById(R.id.ingredients_recycler_view);
+        addToFavouriteImage = view.findViewById(R.id.add_favourite_image_view);
+        addToPlanImage = view.findViewById(R.id.add_plan_image_view);
         getLifecycle().addObserver(youTubePlayerView);
 
     }
@@ -111,26 +113,27 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     }
 
     private void setListeners() {
-        addToFavouriteButton.setOnClickListener(new View.OnClickListener() {
+        addToFavouriteImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (sharedPreferencesManager.isLoggedIn()) {
                     saveMeal(mealDetails, FAVOURITE_KEY);
-                }else{
+                } else {
                     Toast.makeText(getActivity(), "You are in guest mode can not add to favourite", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        addToPlanButton.setOnClickListener(new View.OnClickListener() {
+        addToPlanImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (sharedPreferencesManager.isLoggedIn()) {
                     showDatePickerDialog();
-                }else{
+                } else {
                     Toast.makeText(getActivity(), "You are in guest mode can not add to plan", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
     }
 
     private void saveMeal(MealDetailsResponse.MealDetails mealDetails, String databaseKey) {
@@ -261,12 +264,17 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         setIngredientsRecyclerView();
         adapter = new IngredientAdapter(ingredients, getActivity());
         ingredientsRecyclerView.setAdapter(adapter);
-        youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
-            @Override
-            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
-                youTubePlayer.cueVideo(mealDetails.getYoutubeURL(), 0);
-            }
-        });
+        if (!TextUtils.isEmpty(mealDetails.getYoutubeURL())) {
+            youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+                @Override
+                public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                    youTubePlayer.cueVideo(getVideoIdFromUrl(mealDetails.getYoutubeURL()), 0);
+                }
+            });
+        } else {
+
+            youTubePlayerView.setVisibility(View.GONE);
+        }
 
     }
 
@@ -284,6 +292,18 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     public void showIngredientsErrorMessage(String errorMessage) {
 
     }
-
+    private String getVideoIdFromUrl(String youtubeUrl) {
+        // Extract video ID from the URL
+        String videoId = null;
+        if (youtubeUrl != null && youtubeUrl.trim().length() > 0) {
+            String pattern = "(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed'\\/|watch\\?v=|%2Fvideos%2F|embed'\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|%2Fv%2F|youtu.be\\/|embed\\/|watch\\?v=|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|%2Fv%2F|[\\?\\&]v=|\\/videos\\/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed'\\/|watch\\?v=|%2Fvideos%2F|embed'\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|%2Fv%2F)([\\w\\-_]*)";
+            Pattern compiledPattern = Pattern.compile(pattern);
+            Matcher matcher = compiledPattern.matcher(youtubeUrl);
+            if (matcher.find()) {
+                videoId = matcher.group();
+            }
+        }
+        return videoId;
+    }
 
 }

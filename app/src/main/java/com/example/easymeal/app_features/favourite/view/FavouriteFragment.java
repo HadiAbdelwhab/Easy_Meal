@@ -1,12 +1,16 @@
 package com.example.easymeal.app_features.favourite.view;
 
 import static com.example.easymeal.util.Constants.USER_ID_KEY;
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,14 +18,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.easymeal.R;
+import com.example.easymeal.app_features.MainActivity;
 import com.example.easymeal.app_features.favourite.presenter.FavouritePresenter;
 import com.example.easymeal.app_features.favourite.presenter.FavouritePresenterImpl;
+import com.example.easymeal.app_features.favourite.view.adapters.FavouriteMealsAdapter;
+import com.example.easymeal.app_features.favourite.view.adapters.OnDeleteMealListener;
+import com.example.easymeal.app_features.favourite.view.adapters.OnItemClickListener;
 import com.example.easymeal.database.MealsLocalDataSourceImpl;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.network.MealsRemoteDataSourceImpl;
+import com.example.easymeal.util.ConnectivityUtils;
+import com.example.easymeal.util.SharedPreferencesManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -32,14 +45,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
-public class FavouriteFragment extends Fragment implements FavouriteView, OnDeleteMealListener {
+public class FavouriteFragment extends Fragment implements FavouriteView, OnDeleteMealListener, OnItemClickListener {
 
     private static final String TAG = "FavouriteFragment";
     private RecyclerView favouriteMealRecyclerView;
-
+    private TextView guestTextView;
     private FavouritePresenter presenter;
     private FavouriteMealsAdapter adapter;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private SharedPreferencesManager sharedPreferencesManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,14 +66,20 @@ public class FavouriteFragment extends Fragment implements FavouriteView, OnDele
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView(view);
+        sharedPreferencesManager = new SharedPreferencesManager(requireActivity());
         presenter = new FavouritePresenterImpl(this, MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
                 MealsLocalDataSourceImpl.getInstance(getActivity())));
         presenter.getFavouriteMeals();
 
+        if (!sharedPreferencesManager.isLoggedIn()) {
+            favouriteMealRecyclerView.setVisibility(View.GONE);
+            guestTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initView(View view) {
         favouriteMealRecyclerView = view.findViewById(R.id.favourite_meals_recycler_view);
+        guestTextView = view.findViewById(R.id.guest_mode_text_view_favourite);
     }
 
     private void setFavouriteMealRecyclerView() {
@@ -73,7 +93,8 @@ public class FavouriteFragment extends Fragment implements FavouriteView, OnDele
     @Override
     public void showFavouriteMeals(List<MealDetailsResponse.MealDetails> mealDetails) {
         setFavouriteMealRecyclerView();
-        adapter = new FavouriteMealsAdapter(mealDetails, getActivity(), this);
+        adapter = new FavouriteMealsAdapter(mealDetails, getActivity(),
+                this,this);
         favouriteMealRecyclerView.setAdapter(adapter);
     }
 
@@ -133,4 +154,16 @@ public class FavouriteFragment extends Fragment implements FavouriteView, OnDele
         });
     }
 
+    @Override
+    public void onClick(View view, String mealId) {
+        Log.i(TAG, "onClick: "+mealId);
+        if (ConnectivityUtils.isNetworkAvailable(getApplicationContext())) {
+            FavouriteFragmentDirections.ActionFavouriteFragmentToMealDetailsFragment action=
+                    FavouriteFragmentDirections.actionFavouriteFragmentToMealDetailsFragment(mealId);
+            Navigation.findNavController(view).navigate(action);
+        } else {
+            Toast.makeText(getActivity(), "You should be online to show the details", Toast.LENGTH_SHORT).show();
+        }
+
+    }
 }

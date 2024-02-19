@@ -8,5 +8,5 @@ public class Constants {
     public static final String USER_ID_KEY="id";
     public static final String FAVOURITE_KEY="favourite";
     public static final String PLAN_KEY="plan";
-
+    public static final String PHOTO_URL_KEY="photo";
 }

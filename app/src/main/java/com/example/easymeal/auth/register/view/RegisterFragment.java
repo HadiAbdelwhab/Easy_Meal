@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,7 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class RegisterFragment extends Fragment {
 
     private static final String TAG = "RegisterFragment";
-    private TextInputEditText emailEditText, passwordEditText, nameEditText;
+    private TextInputEditText emailEditText, passwordEditText, nameEditText, confirmPasswordEditText;
     private Button registerButton;
     private FirebaseAuth auth;
     private ProgressBar progressBar;
@@ -54,7 +56,7 @@ public class RegisterFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 
-        setListeners();
+        setListeners(view);
     }
 
     private void initViews(View view) {
@@ -63,9 +65,10 @@ public class RegisterFragment extends Fragment {
         passwordEditText = view.findViewById(R.id.password_text_field_register);
         registerButton = view.findViewById(R.id.register_button);
         nameEditText = view.findViewById(R.id.name_text_field_register);
+        confirmPasswordEditText = view.findViewById(R.id.confirm_password_text_field_register);
     }
 
-    private void setListeners() {
+    private void setListeners(View view) {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,25 +77,32 @@ public class RegisterFragment extends Fragment {
                 String name = nameEditText.getText().toString();
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
+                String confirmPassword = confirmPasswordEditText.getText().toString();
 
-                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
                     Toast.makeText(getActivity(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     return;
                 }
 
-                registerUser(email, password, name);
+                if (!password.equals(confirmPassword)) {
+                    confirmPasswordEditText.setError("Passwords do not match");
+                    progressBar.setVisibility(View.GONE);
+                    return;
+                }
+
+                registerUser(email, password, name,v);
             }
         });
     }
 
-    private void registerUser(String email, String password, String name) {
+    private void registerUser(String email, String password, String name, View view) {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            handleRegistrationSuccess(name);
+                            handleRegistrationSuccess(name,view);
                         } else {
                             handleRegistrationFailure(task.getException());
                         }
@@ -100,10 +110,11 @@ public class RegisterFragment extends Fragment {
                 });
     }
 
-    private void handleRegistrationSuccess(String name) {
+    private void handleRegistrationSuccess(String name,View view) {
         progressBar.setVisibility(View.GONE);
         Toast.makeText(getActivity(), "Account Created", Toast.LENGTH_SHORT).show();
 
+        Navigation.findNavController(view).navigate(RegisterFragmentDirections.actionRegisterFragmentToLoginFragment());
         FirebaseUser user = auth.getCurrentUser();
         if (user != null) {
             String userId = user.getUid();
@@ -135,4 +146,6 @@ public class RegisterFragment extends Fragment {
                     }
                 });
     }
+
+
 }

@@ -25,6 +25,7 @@ import com.example.easymeal.database.MealsLocalDataSourceImpl;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.network.MealsRemoteDataSourceImpl;
+import com.example.easymeal.util.SharedPreferencesManager;
 
 import java.util.Calendar;
 import java.util.List;
@@ -37,8 +38,9 @@ public class PlanFragment extends Fragment implements PlanView {
     private PlanPresenter presenter;
     private CardView planCardView;
     private Button chosePlanMealButton;
-    private TextView mealNameTextView, insructionsTextView;
+    private TextView mealNameTextView, insructionsTextView,guestTextView;
     private ImageView mealImageView;
+    private SharedPreferencesManager sharedPreferencesManager;
 
     public PlanFragment() {
         // Required empty public constructor
@@ -57,6 +59,11 @@ public class PlanFragment extends Fragment implements PlanView {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
         setListeners();
+        sharedPreferencesManager = new SharedPreferencesManager(requireActivity());
+        if (!sharedPreferencesManager.isLoggedIn()) {
+            guestTextView.setVisibility(View.VISIBLE);
+            chosePlanMealButton.setVisibility(View.INVISIBLE);
+        }
         presenter = new PlanPresenterImpl(this, MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
                 MealsLocalDataSourceImpl.getInstance(getActivity())));
     }
@@ -67,6 +74,7 @@ public class PlanFragment extends Fragment implements PlanView {
         mealNameTextView = view.findViewById(R.id.meal_name_plan);
         mealImageView = view.findViewById(R.id.meal_image_view_plan);
         insructionsTextView = view.findViewById(R.id.instruction_text_view_plan);
+        guestTextView=view.findViewById(R.id.guest_mode_text_view_plan);
     }
 
     @Override

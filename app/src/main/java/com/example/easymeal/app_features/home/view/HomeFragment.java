@@ -84,6 +84,25 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
         categoriesRecyclerView.setLayoutManager(categoriesLayoutManger);
 
 
+    }
+
+    @Override
+    public void showCategories(CategoryResponse categoryResponse) {
+        categories = categoryResponse.getCategories();
+        //Log.i(TAG, "showCategories: "+categories);
+        categoriesAdapter = new CategoriesAdapter(getActivity(), categories, this);
+        categoriesRecyclerView.setAdapter(categoriesAdapter);
+    }
+
+    @Override
+    public void showCategoriesErrorMessage(String errorMassage) {
+        //Log.i(TAG, "showErrorMessage: "+errorMassage);
+    }
+
+    @Override
+    public void showAreas(AreaListResponse areaListResponse) {
+
+
         List<AreaListResponse.Area> populatedAreas = new ArrayList<>();
         populatedAreas.add(new AreaListResponse.Area("American", R.drawable.american));
         populatedAreas.add(new AreaListResponse.Area("British", R.drawable.british));
@@ -115,27 +134,6 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
         populatedAreas.add(new AreaListResponse.Area("Vietnamese", R.drawable.vietnamese));
         countriesAdapter = new CountriesAdapter(getActivity(), populatedAreas, this);
         countriesRecyclerView.setAdapter(countriesAdapter);
-    }
-
-    @Override
-    public void showCategories(CategoryResponse categoryResponse) {
-        categories = categoryResponse.getCategories();
-        //Log.i(TAG, "showCategories: "+categories);
-        categoriesAdapter = new CategoriesAdapter(getActivity(), categories, this);
-        categoriesRecyclerView.setAdapter(categoriesAdapter);
-    }
-
-    @Override
-    public void showCategoriesErrorMessage(String errorMassage) {
-        //Log.i(TAG, "showErrorMessage: "+errorMassage);
-    }
-
-    @Override
-    public void showAreas(AreaListResponse areaListResponse) {
-        //Log.i(TAG, "showAreas: " + areaListResponse.getAreas());
-        //adapter=new CountriesAdapter(getActivity(),areaListResponse.getAreas());
-        //countriesRecyclerView.setAdapter(adapter);
-
 
     }
 

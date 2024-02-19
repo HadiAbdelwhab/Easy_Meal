@@ -52,7 +52,11 @@
         android:id="@+id/favouriteFragment"
         android:name="com.example.easymeal.app_features.favourite.view.FavouriteFragment"
         android:label="fragment_favourite"
-        tools:layout="@layout/fragment_favourite" />
+        tools:layout="@layout/fragment_favourite" >
+        <action
+            android:id="@+id/action_favouriteFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mealsFragment"
         android:name="com.example.easymeal.app_features.meals.view.MealsFragment"

@@ -1,6 +1,7 @@
 package com.example.easymeal.auth.login.view;
 
 import static com.example.easymeal.util.Constants.FAVOURITE_KEY;
+import static com.example.easymeal.util.Constants.PHOTO_URL_KEY;
 import static com.example.easymeal.util.Constants.PLAN_KEY;
 import static com.example.easymeal.util.Constants.USER_ID_KEY;
 import static com.example.easymeal.util.Constants.USER_NAME_KEY;
@@ -132,9 +133,6 @@ public class LoginFragment extends Fragment {
             Toast.makeText(context, "You are on offline mode", Toast.LENGTH_SHORT).show();
             Intent offlineModeIntent = new Intent(context, MainActivity.class);
             getActivity().startActivity(offlineModeIntent);
-        } else {
-            // Device is not connected to the internet
-            // Your code for no internet connection
         }
 
     }
@@ -236,6 +234,8 @@ public class LoginFragment extends Fragment {
                         prefManager.setLoggedIn(true);
 
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.putExtra(USER_NAME_KEY, user.getDisplayName());
+                        intent.putExtra(PHOTO_URL_KEY,user.getPhotoUrl());
                         startActivity(intent);
                         getActivity().finish();
                     } else {
@@ -268,8 +268,8 @@ public class LoginFragment extends Fragment {
                 progressBar.setVisibility(View.VISIBLE);
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-                //retrieveFavouriteMeals(account.getId());
-                // retrieveFavouriteMeals(account.getId());
+                retrieveFavouriteMeals(account.getId());
+                retrieveFavouriteMeals(account.getId());
                 firebaseAuthWithGoogle(account.getIdToken());
 
 
@@ -363,14 +363,12 @@ public class LoginFragment extends Fragment {
                         String mealDate = mealSnapshot.child("date").getValue(String.class);
                         String mealInstructions=mealSnapshot.child("instructions").getValue(String.class);
 
-                        // Check if "mealImage" is null and retrieve it from the "mealDetails" node
                         if (mealImage == null) {
                             String mealDetailsId = mealSnapshot.getKey();
                             DataSnapshot mealDetailsSnapshot = dataSnapshot.child(mealDetailsId);
                             mealImage = mealDetailsSnapshot.child("mealImage").getValue(String.class);
                         }
 
-                        // Create a Meal object and pass it to the insertMeal method
                         MealDetailsResponse.MealDetails meal = new MealDetailsResponse.MealDetails(mealId, mealName, mealImage, mealDate,mealInstructions);
 
                         meal.setDatabaseKey(PLAN_KEY);

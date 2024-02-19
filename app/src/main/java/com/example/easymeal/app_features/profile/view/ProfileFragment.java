@@ -1,5 +1,7 @@
 package com.example.easymeal.app_features.profile.view;
 
+import static com.example.easymeal.util.Constants.IMAGES_BASE_URL;
+import static com.example.easymeal.util.Constants.PHOTO_URL_KEY;
 import static com.example.easymeal.util.Constants.USER_NAME_KEY;
 
 import android.content.Intent;
@@ -9,12 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.easymeal.R;
 import com.example.easymeal.app_features.profile.presenter.ProfilePresenter;
 import com.example.easymeal.app_features.profile.presenter.ProfilePresenterImpl;
@@ -27,10 +32,14 @@ import com.example.easymeal.util.SharedPreferencesManager;
 
 public class ProfileFragment extends Fragment {
 
+    private static final String TAG = "ProfileFragment";
     private TextView nameTextView;
     private Button logoutButton;
     private ProfilePresenter presenter;
     private SharedPreferencesManager prefManager;
+    private ImageView userImage;
+    private String imageURL;
+    private String name;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,8 +55,16 @@ public class ProfileFragment extends Fragment {
 
         presenter=new ProfilePresenterImpl( MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
                 MealsLocalDataSourceImpl.getInstance(getActivity())));
-        String name=getActivity().getIntent().getStringExtra(USER_NAME_KEY);
+
+        name=getActivity().getIntent().getStringExtra(USER_NAME_KEY);
+        imageURL=getActivity().getIntent().getStringExtra(PHOTO_URL_KEY);
+        Log.i(TAG, "onViewCreated: "+imageURL);
         nameTextView.setText(name);
+        Glide.with(getActivity())
+                .load(imageURL)
+                .error(R.drawable.avatar)
+                .placeholder(R.drawable.avatar)
+                .into(userImage);
         setListeners();
     }
 
@@ -65,7 +82,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void initViews(View view){
-        nameTextView=view.findViewById(R.id.textView);
+        nameTextView=view.findViewById(R.id.user_name_text_view);
         logoutButton=view.findViewById(R.id.log_out_button);
+        userImage=view.findViewById(R.id.user_image_view);
     }
 }

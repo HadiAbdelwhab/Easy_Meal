@@ -1,4 +1,4 @@
-package com.example.easymeal.app_features.favourite.view;
+package com.example.easymeal.app_features.favourite.view.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.easymeal.R;
-import com.example.easymeal.app_features.home.view.adapters.CategoriesAdapter;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 
 import java.util.List;
@@ -21,12 +20,15 @@ import java.util.List;
 public class FavouriteMealsAdapter extends RecyclerView.Adapter<FavouriteMealsAdapter.ViewHolder> {
     private List<MealDetailsResponse.MealDetails> mealDetails;
     private Context context;
-    private OnDeleteMealListener listener;
+    private OnDeleteMealListener onDeleteMealListener;
+    private OnItemClickListener itemClickListener;
 
-    public FavouriteMealsAdapter(List<MealDetailsResponse.MealDetails> mealDetails, Context context, OnDeleteMealListener listener) {
+    public FavouriteMealsAdapter(List<MealDetailsResponse.MealDetails> mealDetails, Context context,
+                                 OnDeleteMealListener onDeleteMealListener,OnItemClickListener itemClickListener) {
         this.mealDetails = mealDetails;
         this.context = context;
-        this.listener = listener;
+        this.onDeleteMealListener = onDeleteMealListener;
+        this.itemClickListener=itemClickListener;
     }
 
     @NonNull
@@ -46,10 +48,16 @@ public class FavouriteMealsAdapter extends RecyclerView.Adapter<FavouriteMealsAd
                 .placeholder(R.drawable.laod)
                 .error(R.drawable.laod)
                 .into(holder.mealImageView);
+        holder.mealImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemClickListener.onClick(v,mealDetails.get(position).getIdMeal());
+            }
+        });
         holder.deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onClick(mealDetails.get(position));
+                onDeleteMealListener.onClick(mealDetails.get(position));
             }
         });
 

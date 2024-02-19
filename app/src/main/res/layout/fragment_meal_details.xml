@@ -8,25 +8,46 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
+
+
+
 
         <ImageView
-            android:scaleType="center"
             android:id="@+id/meal_image_view"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            android:scaleType="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/add_favourite_image_view"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/favourite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-
+        <ImageView
+            android:id="@+id/add_plan_image_view"
+            android:layout_width="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/calender"
+            app:layout_constraintEnd_toStartOf="@+id/add_favourite_image_view"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginEnd="8dp" />
         <TextView
             android:id="@+id/meal_name_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#74000000"
             android:textColor="@color/white"
             android:textSize="25sp"
             android:textStyle="bold"
-            android:background="#74000000"
             app:layout_constraintBottom_toBottomOf="@+id/meal_image_view"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Meal Name" />
@@ -73,29 +94,5 @@
             app:layout_constraintTop_toBottomOf="@+id/instruction_text_view"
             app:videoId="S0Q4gqBUs7c" />
 
-        <Button
-            android:id="@+id/add_favourite_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/add_to_favourite_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/youtube_player_view" />
-        <Button
-            android:id="@+id/add_plan_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/add_to_plan_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/add_favourite_button" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

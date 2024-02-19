@@ -1,27 +1,31 @@
 <resources>
-    <string name="app_name">Easy Meal</string>
-
-
-    <string name="easy_meal_text_view">Easy Meal</string>
-    <string name="login_button">Login</string>
-    <string name="new_creative_meal_everyday_text_view">New Creative meal everyday</string>
-    <string name="email_text_view">Email</string>
-    <string name="password_text_view">Password\n</string>
-    <string name="google_sign_in">Sign with Google</string>
-    <string name="do_not_have_an_account_textview">Don\'t have an account?</string>
-    <string name="register_textview">Register\n</string>
-    <string name="home_text_view">Home</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="search_text_view">Search</string>
-    <string name="plan_text_view">Plan\n</string>
-    <string name="profile_text_view">Profile</string>
-    <string name="favourite_text_view">Favourite</string>
-    <string name="join_us_now">Join us now</string>
-    <string name="name_text_view">Name</string>
-    <string name="register_button">Register</string>
-    <string name="let_s_try_a_new_meal_text_view">Let\'s try a new meal</string>
-    <string name="area_text_view">Area\n</string>
-    <string name="ingredient_text_view">Ingredient</string>
-    <string name="category_text_view">Category</string>
+    <string name="app_name">وجبة سهلة</string>
+    <string name="easy_meal_text_view">وجبة سهلة</string>
+    <string name="login_button">تسجيل الدخول</string>
+    <string name="new_creative_meal_everyday_text_view">وجبة إبداعية جديدة كل يوم</string>
+    <string name="email_text_view">البريد الإلكتروني</string>
+    <string name="password_text_view">كلمة المرور</string>
+    <string name="google_sign_in">تسجيل الدخول بواسطة Google</string>
+    <string name="do_not_have_an_account_textview">ليس لديك حساب؟</string>
+    <string name="register_textview">التسجيل</string>
+    <string name="home_text_view">الرئيسية</string>
+    <string name="hello_blank_fragment">مرحبًا بك في الشاشة الرئيسية</string>
+    <string name="search_text_view">بحث</string>
+    <string name="plan_text_view">الخطة</string>
+    <string name="profile_text_view">الملف الشخصي</string>
+    <string name="favourite_text_view">المفضلة</string>
+    <string name="join_us_now">انضم إلينا الآن</string>
+    <string name="name_text_view">الاسم</string>
+    <string name="register_button">تسجيل</string>
+    <string name="let_s_try_a_new_meal_text_view">لنجرب وجبة جديدة</string>
+    <string name="area_text_view">المنطقة</string>
+    <string name="ingredient_text_view">المكونات</string>
+    <string name="category_text_view">الفئة</string>
     <string name="client_id">291040840405-28ppclmssq2vcjt7ctjs42v68gncbpvk.apps.googleusercontent.com</string>
+    <string name="add_to_favourite_button">إضافة إلى المفضلة</string>
+    <string name="confirm_password_text_view">تأكيد كلمة المرور</string>
+    <string name="join_as_guest_textview">انضم كضيف</string>
+    <string name="add_to_plan_button">إضافة إلى الخطة</string>
+    <string name="choose_day_to_show_meal_button">اختر يوم لعرض الوجبة</string>
+    <string name="meal_text_view">الوجبة</string>
 </resources>
