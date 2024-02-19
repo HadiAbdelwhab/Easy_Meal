@@ -22,4 +22,7 @@ public interface MealsRemoteDataSource {
     void searchMealByName(NetworkCallBack.SearchMealCallBack searchMealCallBack
             , String mealName);
 
+    void getMealsByIngredient(NetworkCallBack.GetMealsByIngredient getMealsByIngredient,
+                              String ingredientName);
+
 }

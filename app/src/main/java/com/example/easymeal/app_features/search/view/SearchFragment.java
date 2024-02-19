@@ -21,7 +21,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.easymeal.R;
 import com.example.easymeal.app_features.home.view.adapters.CategoriesAdapter;
+import com.example.easymeal.app_features.home.view.adapters.OnChosenCategoryClickListener;
 import com.example.easymeal.app_features.meals.view.adpters.MealsAdapter;
+import com.example.easymeal.app_features.meals.view.adpters.OnChosenMealListener;
 import com.example.easymeal.app_features.search.presenter.SearchPresenter;
 import com.example.easymeal.app_features.search.presenter.SearchPresenterImpl;
 import com.example.easymeal.database.MealsLocalDataSourceImpl;
@@ -29,7 +31,9 @@ import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.Category;
 import com.example.easymeal.model.pojo.CategoryResponse;
 import com.example.easymeal.model.pojo.IngredientsResponse;
+import com.example.easymeal.model.pojo.Meal;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
+import com.example.easymeal.model.pojo.MealsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.network.MealsRemoteDataSourceImpl;
 import com.google.android.material.chip.Chip;
@@ -44,22 +48,25 @@ import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class SearchFragment extends Fragment implements SearchView {
+public class SearchFragment extends Fragment implements SearchView, OnChosenMealListener {
 
     private static final String TAG = "SearchFragment";
     private CategoriesAdapter adapter;
     private SearchPresenter presenter;
     private RecyclerView recyclerView;
     private TextInputEditText searchEditText;
-    private Chip categoryChip;
+    private Chip categoryChip, areaChip, mealChip, ingredientChip;
     private List<String> categoriesName;
     private List<String> filteredNames;
     private List<Category> categoryList;
     private ChipGroup chipGroup;
     private MealsAdapter mealsAdapter;
+    private CategoriesAdapter categoriesAdapter;
     private CardView searchCardView;
     private TextView searhMealTextView;
     private ImageView searchMealImageView;
@@ -87,30 +94,37 @@ public class SearchFragment extends Fragment implements SearchView {
                 MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
                         MealsLocalDataSourceImpl.getInstance(getActivity())));
         setListeners();
-        adapter = new CategoriesAdapter(requireActivity(), categoriesName); // Assuming you have a constructor for CategoriesAdapter
-        recyclerView.setAdapter(adapter);
 
+
+        presenter.getMealsByIngredient("Chicken");
     }
 
     private void setListeners() {
-
-        searchEditText.addTextChangedListener(new TextWatcher() {
+        Observable<String> observable = Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void subscribe(@NonNull ObservableEmitter<String> emitter) throws Throwable {
+                final String[] name = new String[1];
+                searchEditText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
+                    }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                presenter.searchMealByName(s.toString());
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        name[0] = s.toString();
+                        emitter.onNext(name[0]);
 
-            }
+                    }
 
-            @Override
-            public void afterTextChanged(Editable s) {
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
             }
         });
-
         disposables.add(RxTextView.textChanges(searchEditText)
                 .debounce(1000, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -119,16 +133,56 @@ public class SearchFragment extends Fragment implements SearchView {
                 }, error -> {
                     Log.e(TAG, "Error: ");
                 }));
+        chipGroup.setSingleSelection(true);
+        /*chipGroup.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
+                if (areaChip.isChecked()) {
+                    presenter.getAreas();
+                    areaChip.setChipBackgroundColorResource(R.color.primary_color);
+                } else {
+                    areaChip.setChipBackgroundColorResource(R.color.white);
+                }
+
+                if (mealChip.isChecked()) {
+                    mealChip.setChipBackgroundColorResource(R.color.primary_color);
+                } else {
+                    mealChip.setChipBackgroundColorResource(R.color.white);
+                }
+
+                if (ingredientChip.isChecked()) {
+                    presenter.getIngredients();
+                    ingredientChip.setChipBackgroundColorResource(R.color.primary_color);
+                } else {
+                    ingredientChip.setChipBackgroundColorResource(R.color.white);
+                }
+
+                if (categoryChip.isChecked()) {
+                    presenter.getCategories();
+                    categoryChip.setChipBackgroundColorResource(R.color.primary_color);
+                } else {
+                    categoryChip.setChipBackgroundColorResource(R.color.white);
+                }
+            }
+
+        });*/
+
     }
 
     private void initViews(View view) {
         recyclerView = view.findViewById(R.id.search_recycler_view);
-        categoryChip = view.findViewById(R.id.chip_category);
         searchEditText = view.findViewById(R.id.search_text_field);
-        chipGroup = view.findViewById(R.id.chips_group);
+
         searchCardView = view.findViewById(R.id.search_meal_card);
         searhMealTextView = view.findViewById(R.id.search_meal_text_view_meals);
         searchMealImageView = view.findViewById(R.id.search_meal_image_view_meals);
+
+        chipGroup = view.findViewById(R.id.chips_group);
+        categoryChip = view.findViewById(R.id.chip_category);
+        areaChip = view.findViewById(R.id.chip_area);
+        mealChip = view.findViewById(R.id.chip_meal);
+        ingredientChip = view.findViewById(R.id.chip_ingredient);
+
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager categoriesLayoutManger = new LinearLayoutManager(getActivity());
         categoriesLayoutManger.setOrientation(RecyclerView.HORIZONTAL);
@@ -143,7 +197,48 @@ public class SearchFragment extends Fragment implements SearchView {
         recyclerView.setLayoutManager(manager);
     }
 
-    private void filterCategories(String query) {
+
+    @Override
+    public void showMealsByCategories(MealsResponse mealsResponse) {
+
+    }
+
+    @Override
+    public void showMealsByCategoriesErrorMessage(String ErrorMassage) {
+
+    }
+
+    @Override
+    public void showMealsByArea(MealsResponse mealsResponse) {
+
+    }
+
+    @Override
+    public void showMealsByAreaErrorMessage(String errorMessage) {
+
+    }
+
+    @Override
+    public void showMealsByIngredients(MealsResponse mealsResponse) {
+        setAdapter();
+        List<Meal> meals=mealsResponse.getMeals();
+        Log.i(TAG, "showMealsByIngredients: "+meals);
+        mealsAdapter=new MealsAdapter(getActivity(),meals,this);
+        recyclerView.setAdapter(mealsAdapter);
+    }
+
+    @Override
+    public void showMealsByIngredientsErrorMessage(String errorMessage) {
+        Log.i(TAG, "showMealsByIngredientsErrorMessage: "+errorMessage);
+    }
+
+    @Override
+    public void OnClick(String mealId, View view) {
+
+    }
+}
+
+    /*private void filterCategories(String query) {
         Observable.create(emitter -> {
                     if (categoryList != null) {
                         List<String> categoryNames = new ArrayList<>();
@@ -173,60 +268,4 @@ public class SearchFragment extends Fragment implements SearchView {
                             Log.i(TAG, "filterCategories: error");
                         }
                 );
-    }
-
-    @Override
-    public void showCategories(CategoryResponse categoryResponse) {
-        categoryList = categoryResponse.getCategories();
-        categoriesName = categoryList.stream().map(Category::getCategoryName).collect(Collectors.toList());
-        filterCategories("Beef"); // To initially load all categories
-    }
-
-    @Override
-    public void showCategoriesErrorMessage(String ErrorMassage) {
-
-    }
-
-    @Override
-    public void showIngredients(IngredientsResponse ingredientsResponse) {
-
-    }
-
-    @Override
-    public void showIngredientsErrorMessage(String ErrorMassage) {
-
-    }
-
-    @Override
-    public void showAreas(AreaListResponse areaListResponse) {
-
-    }
-
-    @Override
-    public void showAreasErrorMessage(String ErrorMassage) {
-
-    }
-
-    @Override
-    public void searchMealByNameResult(MealDetailsResponse mealDetailsResponse) {
-
-        recyclerView.setVisibility(View.GONE);
-        searchCardView.setVisibility(View.VISIBLE);
-
-        searhMealTextView.setText(mealDetailsResponse.getMeals().get(0).getMealName());
-        Glide.with(getActivity()).load(mealDetailsResponse.getMeals().get(0).getMealThumb())
-                .placeholder(R.drawable.laod)
-                .error(R.drawable.laod)
-                .into(searchMealImageView);
-
-
-
-    }
-
-    @Override
-    public void searchMealByNameErrorMessage(String errorMessage) {
-
-    }
-
-
-}
+    }*/

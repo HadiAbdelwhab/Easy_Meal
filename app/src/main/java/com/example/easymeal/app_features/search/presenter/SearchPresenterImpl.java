@@ -1,15 +1,19 @@
 package com.example.easymeal.app_features.search.presenter;
 
+import android.util.Log;
+
 import com.example.easymeal.app_features.search.view.SearchView;
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
 import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
+import com.example.easymeal.model.pojo.MealsResponse;
 import com.example.easymeal.model.repository.MealsRepository;
 import com.example.easymeal.network.NetworkCallBack;
 
-public class SearchPresenterImpl implements SearchPresenter, NetworkCallBack.CategoriesCallBack,
-        NetworkCallBack.AreasCallBack,NetworkCallBack.IngredientsCallBack, NetworkCallBack.SearchMealCallBack{
+public class SearchPresenterImpl implements SearchPresenter,
+        NetworkCallBack.SearchMealCallBack, NetworkCallBack.MealsByCategoryCallBack, NetworkCallBack.MealsByAreaCallBack,NetworkCallBack.GetMealsByIngredient{
+    private static final String TAG = "SearchPresenterImpl";
     private SearchView view;
     private MealsRepository repository;
 
@@ -19,19 +23,20 @@ public class SearchPresenterImpl implements SearchPresenter, NetworkCallBack.Cat
     }
 
     @Override
-    public void getCategories() {
-        repository.getAllCategories(this);
+    public void getMealsByCategory(String categoryName) {
+        repository.getMealsByCategory(this,categoryName);
     }
 
     @Override
-    public void getAreas() {
-        repository.getAllAreas(this);
+    public void getMealsByArea(String areaName) {
+        repository.getMealsByArea(this,areaName);
     }
 
     @Override
-    public void getIngredients() {
-        repository.getIngredients(this);
+    public void getMealsByIngredient(String ingredientName) {
+        repository.getMealsByIngredient(this,ingredientName);
     }
+
 
     @Override
     public void searchMealByName(String mealName) {
@@ -39,45 +44,46 @@ public class SearchPresenterImpl implements SearchPresenter, NetworkCallBack.Cat
 
     }
 
+
+
     @Override
-    public void onSuccessResult(CategoryResponse categories) {
-        view.showCategories(categories);
+    public void onSuccessMealsByCategory(MealsResponse mealsResponse) {
+        view.showMealsByCategories(mealsResponse);
     }
 
     @Override
-    public void onFailure(String errorMessage) {
-        view.showCategoriesErrorMessage(errorMessage);
-    }
-
-    @Override
-    public void onSuccessAreaCallBack(AreaListResponse areaListResponse) {
-        view.showAreas(areaListResponse);
-
-    }
-
-    @Override
-    public void onFailAreaCallBack(String errorMessage) {
-        view.showAreasErrorMessage(errorMessage);
-
-    }
-
-    @Override
-    public void onSuccessIngredients(IngredientsResponse ingredientsResponse) {
-        view.showIngredients(ingredientsResponse);
-    }
-
-    @Override
-    public void onFailIngredients(String errorMessage) {
-        view.showIngredientsErrorMessage(errorMessage);
+    public void onFailMealsByCategory(String errorMessage) {
+        view.showMealsByCategoriesErrorMessage(errorMessage);
     }
 
     @Override
     public void onSuccessSearchMeal(MealDetailsResponse mealDetailsResponse) {
-        view.searchMealByNameResult(mealDetailsResponse);
+
     }
 
     @Override
     public void onFailSearchMeal(String errorMessage) {
-        view.searchMealByNameErrorMessage(errorMessage);
+
+    }
+
+    @Override
+    public void onSuccessMealsByArea(MealsResponse mealsResponse) {
+        view.showMealsByArea(mealsResponse);
+    }
+
+    @Override
+    public void onFailMealsByArea(String errorMessage) {
+        view.showMealsByAreaErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void onSuccessMealsByIngredient(MealsResponse mealsResponse) {
+        view.showMealsByIngredients(mealsResponse);
+        Log.i(TAG, "onSuccessMealsByIngredient: "+mealsResponse.getMeals());
+    }
+
+    @Override
+    public void onFailMealByIngredient(String errorMessage) {
+        view.showMealsByIngredientsErrorMessage(errorMessage);
     }
 }

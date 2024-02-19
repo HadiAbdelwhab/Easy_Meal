@@ -1,9 +1,12 @@
 package com.example.easymeal.app_features.search.presenter;
 
 public interface SearchPresenter {
-    void getCategories();
-    void getAreas();
-    void getIngredients();
+    void getMealsByCategory(String categoryName);
+
+    void getMealsByArea(String areaName);
+
+    void getMealsByIngredient(String ingredientName);
+
     void searchMealByName(String mealName);
 
 }

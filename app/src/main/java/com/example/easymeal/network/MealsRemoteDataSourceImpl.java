@@ -5,6 +5,7 @@ import static com.example.easymeal.util.Constants.BASE_URL;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
@@ -287,6 +288,35 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         searchMealCallBack.onFailSearchMeal(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void getMealsByIngredient(NetworkCallBack.GetMealsByIngredient getMealsByIngredient, String ingredientName) {
+        Observable<MealsResponse> observable = service.getMealsByIngredient(ingredientName);
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MealsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull MealsResponse mealsResponse) {
+                        getMealsByIngredient.onSuccessMealsByIngredient(mealsResponse);
+                        Log.i(TAG, "onNext: "+mealsResponse.getMeals());
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        getMealsByIngredient.onFailMealByIngredient(e.getMessage());
                     }
 
                     @Override

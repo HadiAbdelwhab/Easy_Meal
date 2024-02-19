@@ -28,12 +28,17 @@ public interface MealsRepository {
     void searchMealByName(NetworkCallBack.SearchMealCallBack searchMealCallBack,
                           String mealName);
 
+    void getMealsByIngredient(NetworkCallBack.GetMealsByIngredient getMealsByIngredient,
+                              String ingredientName);
+
     //local_methods
     Completable insertMeal(MealDetailsResponse.MealDetails mealDetails);
 
     Completable deleteMeal(MealDetailsResponse.MealDetails mealDetails);
 
     Flowable<List<MealDetailsResponse.MealDetails>> getFavouriteMeals();
+
     Flowable<List<MealDetailsResponse.MealDetails>> getPlanMeals(String date);
+
     Completable truncateMeals();
 }

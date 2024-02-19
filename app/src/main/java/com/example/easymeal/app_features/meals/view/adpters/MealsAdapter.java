@@ -26,7 +26,7 @@ public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.ViewHolder> 
     public MealsAdapter(Context context, List<Meal> mealList, OnChosenMealListener onChosenMeallistener) {
         this.context = context;
         this.mealList = mealList;
-        this.onChosenMeallistener=onChosenMeallistener;
+        this.onChosenMeallistener = onChosenMeallistener;
     }
 
     @NonNull
@@ -41,24 +41,26 @@ public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-        Glide.with(context).load(mealList.get(position).getMealImage())
-                .apply(new RequestOptions().override(80, 100))
-                .placeholder(R.drawable.laod)
-                .error(R.drawable.laod)
-                .into(holder.mealImageView);
-        holder.mealNameTextView.setText(mealList.get(position).getMealName());
-        holder.mealCardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onChosenMeallistener.OnClick(mealList.get(position).getIdMeal(), v);
-            }
-        });
+        if (mealList != null && position < mealList.size()) {
+            Glide.with(context).load(mealList.get(position).getMealImage())
+                    .apply(new RequestOptions().override(80, 100))
+                    .placeholder(R.drawable.laod)
+                    .error(R.drawable.laod)
+                    .into(holder.mealImageView);
+            holder.mealNameTextView.setText(mealList.get(position).getMealName());
+            holder.mealCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onChosenMeallistener.OnClick(mealList.get(position).getIdMeal(), v);
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mealList.size();
+
+        return mealList != null ? mealList.size() : 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

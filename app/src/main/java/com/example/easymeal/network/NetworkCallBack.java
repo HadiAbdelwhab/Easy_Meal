@@ -58,4 +58,10 @@ public interface NetworkCallBack {
 
         void onFailSearchMeal(String errorMessage);
     }
+
+    interface GetMealsByIngredient {
+        void onSuccessMealsByIngredient(MealsResponse mealsResponse);
+
+        void onFailMealByIngredient(String errorMessage);
+    }
 }

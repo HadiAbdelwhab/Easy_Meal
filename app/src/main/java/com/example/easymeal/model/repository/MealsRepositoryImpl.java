@@ -75,6 +75,11 @@ public class MealsRepositoryImpl implements MealsRepository {
     }
 
     @Override
+    public void getMealsByIngredient(NetworkCallBack.GetMealsByIngredient getMealsByIngredient, String ingredientName) {
+        remoteDataSource.getMealsByIngredient(getMealsByIngredient,ingredientName);
+    }
+
+    @Override
     public Completable insertMeal(MealDetailsResponse.MealDetails mealDetails) {
         return localDataSource.insertMeal(mealDetails);
     }

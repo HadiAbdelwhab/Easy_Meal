@@ -34,4 +34,6 @@ public interface MealsService {
     Observable<IngredientsResponse> getIngredients();
     @GET("api/json/v1/1/search.php")
     Observable<MealDetailsResponse> searchMealByName(@Query("s") String mealName);
+    @GET("api/json/v1/1/filter.php")
+    Observable<MealsResponse> getMealsByIngredient(@Query("i") String ingredientName);
 }
