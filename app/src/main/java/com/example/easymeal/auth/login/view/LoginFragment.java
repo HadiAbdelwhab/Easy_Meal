@@ -33,6 +33,7 @@ import com.example.easymeal.database.MealsLocalDataSourceImpl;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.network.MealsRemoteDataSourceImpl;
+import com.example.easymeal.util.ConnectivityUtils;
 import com.example.easymeal.util.SharedPreferencesManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -125,6 +126,112 @@ public class LoginFragment extends Fragment {
 
         presenter = new LoginPresenterImpl(MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(context),
                 MealsLocalDataSourceImpl.getInstance(context)));
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (!ConnectivityUtils.isNetworkAvailable(getApplicationContext())) {
+            Toast.makeText(context, "You are on offline mode", Toast.LENGTH_SHORT).show();
+            Intent offlineModeIntent = new Intent(context, MainActivity.class);
+            getActivity().startActivity(offlineModeIntent);
+        } else {
+            // Device is not connected to the internet
+            // Your code for no internet connection
+        }
 
     }
 
