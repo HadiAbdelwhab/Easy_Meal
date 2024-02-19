@@ -54,7 +54,7 @@ public interface NetworkCallBack {
     }
 
     interface SearchMealCallBack {
-        void onSuccessSearchMeal(MealDetailsResponse mealDetailsResponse);
+        void onSuccessSearchMeal(MealsResponse mealsResponse);
 
         void onFailSearchMeal(String errorMessage);
     }

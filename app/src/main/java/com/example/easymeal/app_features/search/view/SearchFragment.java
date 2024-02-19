@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -56,20 +58,16 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class SearchFragment extends Fragment implements SearchView, OnChosenMealListener {
 
     private static final String TAG = "SearchFragment";
-    private CategoriesAdapter adapter;
     private SearchPresenter presenter;
     private RecyclerView recyclerView;
     private TextInputEditText searchEditText;
     private Chip categoryChip, areaChip, mealChip, ingredientChip;
-    private List<String> categoriesName;
-    private List<String> filteredNames;
-    private List<Category> categoryList;
     private ChipGroup chipGroup;
     private MealsAdapter mealsAdapter;
-    private CategoriesAdapter categoriesAdapter;
     private CardView searchCardView;
     private TextView searhMealTextView;
     private ImageView searchMealImageView;
+    private ProgressBar progressBar;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -96,7 +94,6 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
         setListeners();
 
 
-        presenter.getMealsByIngredient("Chicken");
     }
 
     private void setListeners() {
@@ -125,47 +122,74 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
 
             }
         });
-        disposables.add(RxTextView.textChanges(searchEditText)
-                .debounce(1000, TimeUnit.MILLISECONDS)
+        disposables.add(observable
+                .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(text -> {
-                    Log.i(TAG, "On Change Text: " + text);
+                .subscribe(query -> {
+                    Log.i(TAG, "On Change Text: " + query);
+
+                    // Add your filtering logic here
+                    if (categoryChip.isChecked()) {
+                        presenter.getMealsByCategory(query);
+                    } else if (areaChip.isChecked()) {
+                        presenter.getMealsByArea(query);
+                    } else if (mealChip.isChecked()) {
+                        presenter.searchMealByName(query);
+                    } else if (ingredientChip.isChecked()) {
+                        presenter.getMealsByIngredient(query);
+                    }
                 }, error -> {
-                    Log.e(TAG, "Error: ");
+                    Log.e(TAG, "Error: " + error.getMessage());
                 }));
         chipGroup.setSingleSelection(true);
-        /*chipGroup.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
+        chipGroup.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
             @Override
             public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
                 if (areaChip.isChecked()) {
-                    presenter.getAreas();
+                    categoryChip.setChecked(false);
+                    mealChip.setChecked(false);
+                    ingredientChip.setChecked(false);
+                    progressBar.setVisibility(View.VISIBLE);
                     areaChip.setChipBackgroundColorResource(R.color.primary_color);
                 } else {
                     areaChip.setChipBackgroundColorResource(R.color.white);
                 }
 
                 if (mealChip.isChecked()) {
+                    categoryChip.setChecked(false);
+                    areaChip.setChecked(false);
+                    ingredientChip.setChecked(false);
+                    progressBar.setVisibility(View.VISIBLE);
+
                     mealChip.setChipBackgroundColorResource(R.color.primary_color);
                 } else {
                     mealChip.setChipBackgroundColorResource(R.color.white);
                 }
 
                 if (ingredientChip.isChecked()) {
-                    presenter.getIngredients();
+                    categoryChip.setChecked(false);
+                    mealChip.setChecked(false);
+                    areaChip.setChecked(false);
+                    progressBar.setVisibility(View.VISIBLE);
+
                     ingredientChip.setChipBackgroundColorResource(R.color.primary_color);
                 } else {
                     ingredientChip.setChipBackgroundColorResource(R.color.white);
                 }
 
                 if (categoryChip.isChecked()) {
-                    presenter.getCategories();
+                    areaChip.setChecked(false);
+                    mealChip.setChecked(false);
+                    ingredientChip.setChecked(false);
+                    progressBar.setVisibility(View.VISIBLE);
+
                     categoryChip.setChipBackgroundColorResource(R.color.primary_color);
                 } else {
                     categoryChip.setChipBackgroundColorResource(R.color.white);
                 }
             }
 
-        });*/
+        });
 
     }
 
@@ -183,6 +207,8 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
         mealChip = view.findViewById(R.id.chip_meal);
         ingredientChip = view.findViewById(R.id.chip_ingredient);
 
+        progressBar = view.findViewById(R.id.search_progress_bar);
+
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager categoriesLayoutManger = new LinearLayoutManager(getActivity());
         categoriesLayoutManger.setOrientation(RecyclerView.HORIZONTAL);
@@ -191,6 +217,9 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
     }
 
     private void setAdapter() {
+        recyclerView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(RecyclerView.VERTICAL);
@@ -200,7 +229,11 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
 
     @Override
     public void showMealsByCategories(MealsResponse mealsResponse) {
-
+        setAdapter();
+        List<Meal> meals = mealsResponse.getMeals();
+        Log.i(TAG, "showMealsByIngredients: " + meals);
+        mealsAdapter = new MealsAdapter(getActivity(), meals, this);
+        recyclerView.setAdapter(mealsAdapter);
     }
 
     @Override
@@ -210,7 +243,11 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
 
     @Override
     public void showMealsByArea(MealsResponse mealsResponse) {
-
+        setAdapter();
+        List<Meal> meals = mealsResponse.getMeals();
+        Log.i(TAG, "showMealsByIngredients: " + meals);
+        mealsAdapter = new MealsAdapter(getActivity(), meals, this);
+        recyclerView.setAdapter(mealsAdapter);
     }
 
     @Override
@@ -221,51 +258,36 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
     @Override
     public void showMealsByIngredients(MealsResponse mealsResponse) {
         setAdapter();
-        List<Meal> meals=mealsResponse.getMeals();
-        Log.i(TAG, "showMealsByIngredients: "+meals);
-        mealsAdapter=new MealsAdapter(getActivity(),meals,this);
+        List<Meal> meals = mealsResponse.getMeals();
+        Log.i(TAG, "showMealsByIngredients: " + meals);
+        mealsAdapter = new MealsAdapter(getActivity(), meals, this);
         recyclerView.setAdapter(mealsAdapter);
     }
 
     @Override
     public void showMealsByIngredientsErrorMessage(String errorMessage) {
-        Log.i(TAG, "showMealsByIngredientsErrorMessage: "+errorMessage);
+        Log.i(TAG, "showMealsByIngredientsErrorMessage: " + errorMessage);
+    }
+
+    @Override
+    public void showMealBySearch(MealsResponse mealsResponse) {
+        setAdapter();
+        List<Meal> meals = mealsResponse.getMeals();
+        Log.i(TAG, "showMealsByIngredients: " + meals);
+        mealsAdapter = new MealsAdapter(getActivity(), meals, this);
+        recyclerView.setAdapter(mealsAdapter);
+    }
+
+    @Override
+    public void showMealBySearchErrorMessage(String errorMessage) {
+        Log.i(TAG, "showMealBySearchErrorMessage: " + errorMessage);
     }
 
     @Override
     public void OnClick(String mealId, View view) {
+        SearchFragmentDirections.ActionSearchFragmentToMealDetailsFragment action
+            =SearchFragmentDirections.actionSearchFragmentToMealDetailsFragment(mealId);
+        Navigation.findNavController(view).navigate(action);
 
     }
 }
-
-    /*private void filterCategories(String query) {
-        Observable.create(emitter -> {
-                    if (categoryList != null) {
-                        List<String> categoryNames = new ArrayList<>();
-                        for (Category category : categoryList) {
-                            categoryNames.add(category.getCategoryName()); // Assuming 'getStrCategory()' is the method to retrieve category name
-                        }
-
-                        List<String> filteredList = categoryNames.stream()
-                                .filter(name -> name.toLowerCase().contains(query.toLowerCase()))
-                                .collect(Collectors.toList());
-
-                        emitter.onNext(filteredList);
-                        emitter.onComplete();
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        filteredList -> {
-                            if (filteredList instanceof List) {
-                                filteredNames.clear();
-                                filteredNames.addAll((List<String>) filteredList);
-                                adapter.notifyDataSetChanged();
-                            }
-                        },
-                        throwable -> {
-                            Log.i(TAG, "filterCategories: error");
-                        }
-                );
-    }*/

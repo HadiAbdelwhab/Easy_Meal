@@ -33,7 +33,7 @@ public interface MealsService {
     @GET("api/json/v1/1/list.php?i=list")
     Observable<IngredientsResponse> getIngredients();
     @GET("api/json/v1/1/search.php")
-    Observable<MealDetailsResponse> searchMealByName(@Query("s") String mealName);
+    Observable<MealsResponse> searchMealByName(@Query("s") String mealName);
     @GET("api/json/v1/1/filter.php")
     Observable<MealsResponse> getMealsByIngredient(@Query("i") String ingredientName);
 }

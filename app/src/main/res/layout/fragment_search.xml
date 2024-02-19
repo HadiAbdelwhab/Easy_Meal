@@ -27,6 +27,7 @@
 
 
     </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chips_group"
         android:layout_width="match_parent"
@@ -52,6 +53,7 @@
                 android:layout_weight="1"
                 android:text="@string/category_text_view"
                 android:textAlignment="center" />
+
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_meal"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -62,6 +64,7 @@
                 android:layout_weight="1"
                 android:text="@string/meal_text_view"
                 android:textAlignment="center" />
+
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_area"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -87,7 +90,6 @@
     </com.google.android.material.chip.ChipGroup>
 
     <androidx.cardview.widget.CardView
-        android:visibility="gone"
         android:id="@+id/search_meal_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -95,10 +97,12 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:visibility="gone"
         app:cardCornerRadius="30dp"
         app:cardElevation="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_text_input_layout">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -137,5 +141,15 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chips_group" />
+
+    <ProgressBar
+        android:id="@+id/search_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

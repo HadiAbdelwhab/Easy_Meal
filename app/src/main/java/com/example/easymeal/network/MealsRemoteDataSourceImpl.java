@@ -271,18 +271,18 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource {
     @Override
     public void searchMealByName(NetworkCallBack.SearchMealCallBack searchMealCallBack,
                                  String mealName) {
-        Observable<MealDetailsResponse> observable = service.searchMealByName(mealName);
+        Observable<MealsResponse> observable = service.searchMealByName(mealName);
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<MealDetailsResponse>() {
+                .subscribe(new Observer<MealsResponse>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NonNull MealDetailsResponse mealDetailsResponse) {
-                        searchMealCallBack.onSuccessSearchMeal(mealDetailsResponse);
+                    public void onNext(@NonNull MealsResponse mealsResponse) {
+                        searchMealCallBack.onSuccessSearchMeal(mealsResponse);
                     }
 
                     @Override

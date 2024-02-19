@@ -57,13 +57,13 @@ public class SearchPresenterImpl implements SearchPresenter,
     }
 
     @Override
-    public void onSuccessSearchMeal(MealDetailsResponse mealDetailsResponse) {
-
+    public void onSuccessSearchMeal(MealsResponse mealsResponse) {
+       view.showMealBySearch(mealsResponse);
     }
 
     @Override
     public void onFailSearchMeal(String errorMessage) {
-
+        view.showMealsByIngredientsErrorMessage(errorMessage);
     }
 
     @Override
