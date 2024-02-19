@@ -32,6 +32,7 @@ import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.network.MealsRemoteDataSourceImpl;
+import com.example.easymeal.util.SharedPreferencesManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -60,6 +61,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private IngredientAdapter adapter;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
+    private SharedPreferencesManager sharedPreferencesManager;
 
     public MealDetailsFragment() {
         // Required empty public constructor
@@ -80,6 +82,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         initViews(view);
         String mealId = MealDetailsFragmentArgs.fromBundle(getArguments()).getMealId();
 
+        sharedPreferencesManager = new SharedPreferencesManager(requireContext());
         presenter = new MealDetailsPresenterImpl(this,
                 MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
                         MealsLocalDataSourceImpl.getInstance(getActivity())));
@@ -111,15 +114,21 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         addToFavouriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveMeal(mealDetails, FAVOURITE_KEY);
-
+                if (sharedPreferencesManager.isLoggedIn()) {
+                    saveMeal(mealDetails, FAVOURITE_KEY);
+                }else{
+                    Toast.makeText(getActivity(), "You are in guest mode can not add to favourite", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         addToPlanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePickerDialog();
-
+                if (sharedPreferencesManager.isLoggedIn()) {
+                    showDatePickerDialog();
+                }else{
+                    Toast.makeText(getActivity(), "You are in guest mode can not add to plan", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -164,13 +173,15 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         int month = calendar.get(Calendar.MONTH);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
+        long minDateMillis = System.currentTimeMillis();
+        long maxDateMillis = minDateMillis + (7 * 24 * 60 * 60 * 1000);
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 getActivity(),
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDayOfMonth) {
-                        // Handle the selected date
-                        // You can save the selected date to your plan or perform any other actions
+
                         String selectedDate = selectedYear + "-" + (selectedMonth + 1) + "-" + selectedDayOfMonth;
                         saveMealWithDate(mealDetails, PLAN_KEY, selectedDate);
                     }
@@ -180,9 +191,12 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 dayOfMonth
         );
 
-        // Show the DatePickerDialog
+        datePickerDialog.getDatePicker().setMinDate(minDateMillis);
+        datePickerDialog.getDatePicker().setMaxDate(maxDateMillis);
+
         datePickerDialog.show();
     }
+
 
     private void saveMealWithDate(MealDetailsResponse.MealDetails mealDetails, String planKey, String selectedDate) {
 
@@ -205,6 +219,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         mealDetailsMap.put("mealName", mealDetails.getMealName());
         mealDetailsMap.put("mealImage", mealDetails.getMealThumb());
         mealDetailsMap.put("databaseKey", mealDetails.getDatabaseKey());
+        mealDetailsMap.put("instructions", mealDetails.getInstructions());
         mealDetailsMap.put("date", mealDetails.getPlanDate());
 
         String key = reference.push().getKey();
@@ -262,9 +277,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     @Override
     public void showIngredients(IngredientsResponse ingredientsResponse) {
-        /*setIngredientsRecyclerView();
-        adapter=new IngredientAdapter(ingredientsResponse.getIngredientsList(),getActivity());
-        ingredientsRecyclerView.setAdapter(adapter);*/
+
     }
 
     @Override

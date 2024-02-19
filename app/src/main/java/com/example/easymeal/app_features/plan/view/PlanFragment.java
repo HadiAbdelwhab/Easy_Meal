@@ -37,7 +37,7 @@ public class PlanFragment extends Fragment implements PlanView {
     private PlanPresenter presenter;
     private CardView planCardView;
     private Button chosePlanMealButton;
-    private TextView mealNameTextView;
+    private TextView mealNameTextView, insructionsTextView;
     private ImageView mealImageView;
 
     public PlanFragment() {
@@ -59,14 +59,14 @@ public class PlanFragment extends Fragment implements PlanView {
         setListeners();
         presenter = new PlanPresenterImpl(this, MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
                 MealsLocalDataSourceImpl.getInstance(getActivity())));
-        //presenter.getPlanMeals("2024-2-18");
     }
 
     private void initViews(View view) {
         chosePlanMealButton = view.findViewById(R.id.show_meal_plan_button);
         planCardView = view.findViewById(R.id.plan_card);
         mealNameTextView = view.findViewById(R.id.meal_name_plan);
-        mealImageView=view.findViewById(R.id.meal_image_view_plan);
+        mealImageView = view.findViewById(R.id.meal_image_view_plan);
+        insructionsTextView = view.findViewById(R.id.instruction_text_view_plan);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class PlanFragment extends Fragment implements PlanView {
                 .error(R.drawable.laod)
                 .placeholder(R.drawable.laod)
                 .into(mealImageView);
-
+        insructionsTextView.setText("Date : "+mealDetails.get(0).getPlanDate()+"\n"+"Instructions \n"+mealDetails.get(0).getInstructions());
 
     }
 
@@ -96,12 +96,15 @@ public class PlanFragment extends Fragment implements PlanView {
             }
         });
     }
+
     private void showDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
+        long minDateMillis = System.currentTimeMillis();
+        long maxDateMillis = minDateMillis + (7 * 24 * 60 * 60 * 1000);
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 getActivity(),
                 new DatePickerDialog.OnDateSetListener() {
@@ -116,7 +119,8 @@ public class PlanFragment extends Fragment implements PlanView {
                 dayOfMonth
         );
 
-        // Show the DatePickerDialog
+        datePickerDialog.getDatePicker().setMinDate(minDateMillis);
+        datePickerDialog.getDatePicker().setMaxDate(maxDateMillis);
         datePickerDialog.show();
     }
 

@@ -41,4 +41,27 @@ public class LoginPresenterImpl implements LoginPresenter{
                     }
                 });
     }
+
+    @Override
+    public void truncateMeals() {
+        repository.truncateMeals()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "onComplete: meals truncated");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+                });
+    }
 }

@@ -160,6 +160,7 @@ public class LoginFragment extends Fragment {
         joinAsGuestTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                presenter.truncateMeals();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 getActivity().finish();
@@ -319,6 +320,7 @@ public class LoginFragment extends Fragment {
                         String mealId = mealSnapshot.child("mealId").getValue(String.class);
                         String mealName = mealSnapshot.child("mealName").getValue(String.class);
                         String mealImage = mealSnapshot.child("mealImage").getValue(String.class);
+                        String mealInstructions=mealSnapshot.child("instructions").getValue(String.class);
 
                         if (mealImage == null) {
                             String mealDetailsId = mealSnapshot.getKey();
@@ -326,8 +328,8 @@ public class LoginFragment extends Fragment {
                             mealImage = mealDetailsSnapshot.child("mealImage").getValue(String.class);
                         }
 
-                        MealDetailsResponse.MealDetails meal = new MealDetailsResponse.MealDetails(mealId, mealName, mealImage);
-                        meal.setPlanDate("0");
+                        MealDetailsResponse.MealDetails meal = new MealDetailsResponse.MealDetails(mealId, mealName, mealImage,"0",mealInstructions);
+
                         meal.setDatabaseKey(FAVOURITE_KEY);
                         presenter.insertMeal(meal);
 
@@ -359,6 +361,7 @@ public class LoginFragment extends Fragment {
                         String mealName = mealSnapshot.child("mealName").getValue(String.class);
                         String mealImage = mealSnapshot.child("mealImage").getValue(String.class);
                         String mealDate = mealSnapshot.child("date").getValue(String.class);
+                        String mealInstructions=mealSnapshot.child("instructions").getValue(String.class);
 
                         // Check if "mealImage" is null and retrieve it from the "mealDetails" node
                         if (mealImage == null) {
@@ -368,7 +371,7 @@ public class LoginFragment extends Fragment {
                         }
 
                         // Create a Meal object and pass it to the insertMeal method
-                        MealDetailsResponse.MealDetails meal = new MealDetailsResponse.MealDetails(mealId, mealName, mealImage, mealDate);
+                        MealDetailsResponse.MealDetails meal = new MealDetailsResponse.MealDetails(mealId, mealName, mealImage, mealDate,mealInstructions);
 
                         meal.setDatabaseKey(PLAN_KEY);
                         presenter.insertMeal(meal);

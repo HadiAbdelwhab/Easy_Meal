@@ -31,22 +31,15 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-       /* NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.nav_host_fragment_auht);
-
-        navController = navHostFragment.getNavController();*/
-
-        /*navController = Navigation.findNavController(this, R.id.nav_host_fragment_auht);
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (destination.getId() == R.id.loginFragment) {
-                controller.navigate(R.id.loginFragment);
-            }else if (destination.getId() == R.id.registerFragment){
-                controller.navigate(R.id.registerFragment);
-            }
-
-        });*/
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_auht);
 
 
+    }
+    @Override
+    public void onBackPressed() {
+
+        if (!navController.navigateUp()) {
+            super.onBackPressed();
+        }
     }
 }

@@ -19,6 +19,7 @@ public class MealsLocalDataSourceImpl implements MealsLocalDataSource {
         database = MealsDatabase.getInstance(context.getApplicationContext());
         mealDao = database.getMealDAO();
         favouriteMeals = mealDao.getFavouriteMeals();
+
     }
 
     public static MealsLocalDataSourceImpl getInstance(Context context) {
@@ -30,7 +31,7 @@ public class MealsLocalDataSourceImpl implements MealsLocalDataSource {
 
     @Override
     public Flowable<List<MealDetailsResponse.MealDetails>> getFavouriteMeals() {
-        return mealDao.getFavouriteMeals();
+        return favouriteMeals;
     }
 
     @Override

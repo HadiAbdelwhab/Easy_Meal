@@ -88,6 +88,14 @@ public class MealDetailsResponse {
             this.planDate=mealDate;
         }
 
+        public MealDetails(String mealId, String mealName, String mealImage, String mealDate, String mealInstructions) {
+            this.idMeal = mealId;
+            this.mealName = mealName;
+            this.mealThumb = mealImage;
+            this.planDate=mealDate;
+            this.instructions=mealInstructions;
+        }
+
         @NonNull
         public String getDatabaseKey() {
             return databaseKey;
