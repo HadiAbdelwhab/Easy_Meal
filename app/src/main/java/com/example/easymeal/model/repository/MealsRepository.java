@@ -1,7 +1,7 @@
 package com.example.easymeal.model.repository;
 
 import com.example.easymeal.model.pojo.MealDetailsResponse;
-import com.example.easymeal.network.meals.NetworkCallBack;
+import com.example.easymeal.network.NetworkCallBack;
 
 import java.util.List;
 

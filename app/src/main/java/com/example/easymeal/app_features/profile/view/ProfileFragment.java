@@ -21,7 +21,7 @@ import com.example.easymeal.app_features.profile.presenter.ProfilePresenterImpl;
 import com.example.easymeal.auth.AuthenticationActivity;
 import com.example.easymeal.database.MealsLocalDataSourceImpl;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
-import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
+import com.example.easymeal.network.MealsRemoteDataSourceImpl;
 import com.example.easymeal.util.SharedPreferencesManager;
 
 

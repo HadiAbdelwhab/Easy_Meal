@@ -7,7 +7,7 @@ import com.example.easymeal.app_features.meal_details.view.MealDetailsView;
 import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.repository.MealsRepository;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
-import com.example.easymeal.network.meals.NetworkCallBack;
+import com.example.easymeal.network.NetworkCallBack;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;

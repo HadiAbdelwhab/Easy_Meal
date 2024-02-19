@@ -6,7 +6,7 @@ import com.example.easymeal.model.pojo.CategoryResponse;
 import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepository;
-import com.example.easymeal.network.meals.NetworkCallBack;
+import com.example.easymeal.network.NetworkCallBack;
 
 public class SearchPresenterImpl implements SearchPresenter, NetworkCallBack.CategoriesCallBack,
         NetworkCallBack.AreasCallBack,NetworkCallBack.IngredientsCallBack, NetworkCallBack.SearchMealCallBack{

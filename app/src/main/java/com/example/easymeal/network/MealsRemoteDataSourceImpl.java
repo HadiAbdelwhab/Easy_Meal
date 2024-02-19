@@ -1,4 +1,4 @@
-package com.example.easymeal.network.meals;
+package com.example.easymeal.network;
 
 import static com.example.easymeal.util.Constants.BASE_URL;
 

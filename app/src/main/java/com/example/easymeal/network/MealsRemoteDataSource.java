@@ -1,4 +1,4 @@
-package com.example.easymeal.network.meals;
+package com.example.easymeal.network;
 
 public interface MealsRemoteDataSource {
 

@@ -21,7 +21,7 @@ import com.example.easymeal.app_features.favourite.presenter.FavouritePresenterI
 import com.example.easymeal.database.MealsLocalDataSourceImpl;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
-import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
+import com.example.easymeal.network.MealsRemoteDataSourceImpl;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;

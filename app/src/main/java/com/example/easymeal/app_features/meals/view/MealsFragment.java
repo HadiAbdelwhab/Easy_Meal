@@ -23,7 +23,7 @@ import com.example.easymeal.database.MealsLocalDataSourceImpl;
 import com.example.easymeal.model.pojo.Meal;
 import com.example.easymeal.model.pojo.MealsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
-import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
+import com.example.easymeal.network.MealsRemoteDataSourceImpl;
 
 import java.util.List;
 

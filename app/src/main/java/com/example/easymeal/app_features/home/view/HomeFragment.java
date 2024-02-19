@@ -31,7 +31,7 @@ import com.example.easymeal.model.pojo.CategoryResponse;
 import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
-import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
+import com.example.easymeal.network.MealsRemoteDataSourceImpl;
 
 import java.util.ArrayList;
 import java.util.List;

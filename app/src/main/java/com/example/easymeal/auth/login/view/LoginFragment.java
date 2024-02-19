@@ -32,7 +32,7 @@ import com.example.easymeal.auth.login.presenter.LoginPresenterImpl;
 import com.example.easymeal.database.MealsLocalDataSourceImpl;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
-import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
+import com.example.easymeal.network.MealsRemoteDataSourceImpl;
 import com.example.easymeal.util.SharedPreferencesManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -80,13 +80,13 @@ public class LoginFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.context=context;
+        this.context = context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        this.context= null;
+        this.context = null;
     }
 
     @Override
@@ -216,15 +216,18 @@ public class LoginFragment extends Fragment {
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        progressBar.setVisibility(View.VISIBLE);
                         Log.d(TAG, "signInWithCredential:success");
                         FirebaseUser user = auth.getCurrentUser();
+                        retrieveFavouriteMeals(user.getUid());
+                        retrievePlanMeals(user.getUid());
+                        prefManager.setLoggedIn(true);
+
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                         getActivity().finish();
-                        // Update UI or do any other necessary actions upon successful sign-in
                     } else {
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
-                        // Handle sign-in failure, display a message to the user or retry
                         Toast.makeText(context, "Google Sign-In Failed", Toast.LENGTH_SHORT).show();
                         progressBar.setVisibility(View.GONE);
 
@@ -250,8 +253,11 @@ public class LoginFragment extends Fragment {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
+                progressBar.setVisibility(View.VISIBLE);
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
+                //retrieveFavouriteMeals(account.getId());
+                // retrieveFavouriteMeals(account.getId());
                 firebaseAuthWithGoogle(account.getIdToken());
 
 
@@ -275,7 +281,6 @@ public class LoginFragment extends Fragment {
                     intent.putExtra(USER_ID_KEY, userId);
                     Log.i(TAG, "onDataChange: " + userId);
 
-                    // Check if the fragment is attached to the activity before starting the activity
                     if (isAdded() && getActivity() != null) {
                         startActivity(intent);
                         getActivity().finish();

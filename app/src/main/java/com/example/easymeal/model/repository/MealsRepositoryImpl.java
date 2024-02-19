@@ -2,9 +2,9 @@ package com.example.easymeal.model.repository;
 
 import com.example.easymeal.database.MealsLocalDataSource;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
-import com.example.easymeal.network.meals.MealsRemoteDataSource;
-import com.example.easymeal.network.meals.MealsRemoteDataSourceImpl;
-import com.example.easymeal.network.meals.NetworkCallBack;
+import com.example.easymeal.network.MealsRemoteDataSource;
+import com.example.easymeal.network.MealsRemoteDataSourceImpl;
+import com.example.easymeal.network.NetworkCallBack;
 
 import java.util.List;
 

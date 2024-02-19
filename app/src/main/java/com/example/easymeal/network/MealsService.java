@@ -1,4 +1,4 @@
-package com.example.easymeal.network.meals;
+package com.example.easymeal.network;
 
 import com.example.easymeal.model.pojo.AreaListResponse;
 import com.example.easymeal.model.pojo.CategoryResponse;
