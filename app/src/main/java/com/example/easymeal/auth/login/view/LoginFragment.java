@@ -129,11 +129,6 @@ public class LoginFragment extends Fragment {
                 MealsLocalDataSourceImpl.getInstance(context)));
 
 
-        if (!ConnectivityUtils.isNetworkAvailable(getApplicationContext())) {
-            Toast.makeText(context, "You are on offline mode", Toast.LENGTH_SHORT).show();
-            Intent offlineModeIntent = new Intent(context, MainActivity.class);
-            getActivity().startActivity(offlineModeIntent);
-        }
 
     }
 
@@ -269,7 +264,7 @@ public class LoginFragment extends Fragment {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
                 retrieveFavouriteMeals(account.getId());
-                retrieveFavouriteMeals(account.getId());
+                retrievePlanMeals(account.getId());
                 firebaseAuthWithGoogle(account.getIdToken());
 
 

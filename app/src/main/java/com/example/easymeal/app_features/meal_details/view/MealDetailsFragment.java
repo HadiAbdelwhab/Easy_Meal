@@ -231,7 +231,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "Meal details saved to Firebase successfully!");
-                        Toast.makeText(getActivity(), "Added to plan successfully", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.easymeal.R;
@@ -38,7 +39,7 @@ public class PlanFragment extends Fragment implements PlanView {
     private PlanPresenter presenter;
     private CardView planCardView;
     private Button chosePlanMealButton;
-    private TextView mealNameTextView, insructionsTextView,guestTextView;
+    private TextView mealNameTextView, insructionsTextView, guestTextView;
     private ImageView mealImageView;
     private SharedPreferencesManager sharedPreferencesManager;
 
@@ -74,22 +75,31 @@ public class PlanFragment extends Fragment implements PlanView {
         mealNameTextView = view.findViewById(R.id.meal_name_plan);
         mealImageView = view.findViewById(R.id.meal_image_view_plan);
         insructionsTextView = view.findViewById(R.id.instruction_text_view_plan);
-        guestTextView=view.findViewById(R.id.guest_mode_text_view_plan);
+        guestTextView = view.findViewById(R.id.guest_mode_text_view_plan);
     }
 
     @Override
     public void showPlanMeals(List<MealDetailsResponse.MealDetails> mealDetails) {
         Log.i(TAG, "showPlanMeals: " + mealDetails);
-        planCardView.setVisibility(View.VISIBLE);
-        mealNameTextView.setText(mealDetails.get(0).getMealName());
-        Glide.with(getActivity())
-                .load(mealDetails.get(0).getMealThumb())
-                .error(R.drawable.laod)
-                .placeholder(R.drawable.laod)
-                .into(mealImageView);
-        insructionsTextView.setText("Date : "+mealDetails.get(0).getPlanDate()+"\n"+"Instructions \n"+mealDetails.get(0).getInstructions());
+        if (mealDetails == null || mealDetails.isEmpty() || mealDetails.get(0) == null) {
+            Toast.makeText(getActivity(), "No data saved for this day", Toast.LENGTH_SHORT).show();
+        } else {
+            planCardView.setVisibility(View.VISIBLE);
+            MealDetailsResponse.MealDetails firstMeal = mealDetails.get(0);
+            mealNameTextView.setText(firstMeal.getMealName());
 
+            Glide.with(getActivity())
+                    .load(firstMeal.getMealThumb())
+                    .error(R.drawable.laod)
+                    .placeholder(R.drawable.laod)
+                    .into(mealImageView);
+
+            String instructionsText = "Date: " + firstMeal.getPlanDate() + "\n"
+                    + "Instructions\n" + firstMeal.getInstructions();
+            insructionsTextView.setText(instructionsText);
+        }
     }
+
 
     @Override
     public void showPlanMealsErrorMessage(String errorMessage) {

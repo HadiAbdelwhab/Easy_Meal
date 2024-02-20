@@ -1,9 +1,14 @@
 package com.example.easymeal.app_features.home.view;
 
+import static android.view.View.GONE;
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,8 +20,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.easymeal.app_features.MainActivity;
 import com.example.easymeal.app_features.home.presenter.HomePresenter;
 import com.example.easymeal.app_features.home.presenter.HomePresenterImpl;
 import com.example.easymeal.app_features.home.view.adapters.CategoriesAdapter;
@@ -32,6 +39,7 @@ import com.example.easymeal.model.pojo.IngredientsResponse;
 import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.network.MealsRemoteDataSourceImpl;
+import com.example.easymeal.util.ConnectivityUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +54,8 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
     private List<Category> categories;
     private HomePresenter presenter;
     private ImageView randomMealImage;
-    private TextView mealNameTextView;
+    private TextView mealNameTextView, offlineModeTextView;
+    private ConstraintLayout homeConstraintLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,10 +67,11 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        countriesRecyclerView = view.findViewById(R.id.countries_recycler_view);
-        categoriesRecyclerView = view.findViewById(R.id.categories_recycler_view);
-        randomMealImage = view.findViewById(R.id.random_image_view_home);
-        mealNameTextView = view.findViewById(R.id.meal_name_text_view_home);
+        initViews(view);
+        if (!ConnectivityUtils.isNetworkAvailable(getApplicationContext())) {
+            homeConstraintLayout.setVisibility(GONE);
+            offlineModeTextView.setVisibility(View.VISIBLE);
+        }
         setUI();
         presenter = new HomePresenterImpl(this,
                 MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
@@ -70,6 +80,15 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
         presenter.getAllAreas();
         presenter.getRandomMeal();
 
+    }
+
+    private void initViews(View view) {
+        countriesRecyclerView = view.findViewById(R.id.countries_recycler_view);
+        categoriesRecyclerView = view.findViewById(R.id.categories_recycler_view);
+        randomMealImage = view.findViewById(R.id.random_image_view_home);
+        mealNameTextView = view.findViewById(R.id.meal_name_text_view_home);
+        offlineModeTextView=view.findViewById(R.id.offline_mode_text_view_home);
+        homeConstraintLayout=view.findViewById(R.id.home_constrain_layout);
     }
 
     private void setUI() {
@@ -184,14 +203,14 @@ public class HomeFragment extends Fragment implements HomeView, OnChosenCategory
     @Override
     public void onCategoryClick(String categoryName, View view) {
         HomeFragmentDirections.ActionHomeFragmentToMealsFragment toMealsFragment =
-                HomeFragmentDirections.actionHomeFragmentToMealsFragment(categoryName,null);
+                HomeFragmentDirections.actionHomeFragmentToMealsFragment(categoryName, null);
         Navigation.findNavController(view).navigate(toMealsFragment);
     }
 
     @Override
     public void onAreaClick(String countryName, View view) {
         HomeFragmentDirections.ActionHomeFragmentToMealsFragment toMealsFragment =
-                HomeFragmentDirections.actionHomeFragmentToMealsFragment(null,countryName);
+                HomeFragmentDirections.actionHomeFragmentToMealsFragment(null, countryName);
         Navigation.findNavController(view).navigate(toMealsFragment);
     }
 }

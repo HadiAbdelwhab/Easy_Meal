@@ -1,5 +1,8 @@
 package com.example.easymeal.app_features.search.view;
 
+import static android.view.View.GONE;
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -38,6 +41,7 @@ import com.example.easymeal.model.pojo.MealDetailsResponse;
 import com.example.easymeal.model.pojo.MealsResponse;
 import com.example.easymeal.model.repository.MealsRepositoryImpl;
 import com.example.easymeal.network.MealsRemoteDataSourceImpl;
+import com.example.easymeal.util.ConnectivityUtils;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
@@ -64,9 +68,7 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
     private Chip categoryChip, areaChip, mealChip, ingredientChip;
     private ChipGroup chipGroup;
     private MealsAdapter mealsAdapter;
-    private CardView searchCardView;
-    private TextView searhMealTextView;
-    private ImageView searchMealImageView;
+    private TextView offlinModeTextView;
     private ProgressBar progressBar;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -88,6 +90,12 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
+
+        if (!ConnectivityUtils.isNetworkAvailable(getApplicationContext())) {
+            searchEditText.setVisibility(GONE);
+            chipGroup.setVisibility(GONE);
+            offlinModeTextView.setVisibility(View.VISIBLE);
+        }
         presenter = new SearchPresenterImpl(this,
                 MealsRepositoryImpl.getInstance(MealsRemoteDataSourceImpl.getInstance(getActivity()),
                         MealsLocalDataSourceImpl.getInstance(getActivity())));
@@ -197,9 +205,6 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
         recyclerView = view.findViewById(R.id.search_recycler_view);
         searchEditText = view.findViewById(R.id.search_text_field);
 
-        searchCardView = view.findViewById(R.id.search_meal_card);
-        searhMealTextView = view.findViewById(R.id.search_meal_text_view_meals);
-        searchMealImageView = view.findViewById(R.id.search_meal_image_view_meals);
 
         chipGroup = view.findViewById(R.id.chips_group);
         categoryChip = view.findViewById(R.id.chip_category);
@@ -208,7 +213,7 @@ public class SearchFragment extends Fragment implements SearchView, OnChosenMeal
         ingredientChip = view.findViewById(R.id.chip_ingredient);
 
         progressBar = view.findViewById(R.id.search_progress_bar);
-
+        offlinModeTextView=view.findViewById(R.id.offline_mode_text_view_search);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager categoriesLayoutManger = new LinearLayoutManager(getActivity());
         categoriesLayoutManger.setOrientation(RecyclerView.HORIZONTAL);

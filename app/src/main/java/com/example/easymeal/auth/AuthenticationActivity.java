@@ -2,6 +2,7 @@ package com.example.easymeal.auth;
 
 
 import static com.example.easymeal.util.Constants.LOGIN_FRAGMENT;
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -17,6 +18,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.easymeal.R;
+import com.example.easymeal.app_features.MainActivity;
 import com.example.easymeal.auth.login.view.LoginFragment;
 import com.example.easymeal.util.ConnectivityUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -31,7 +33,14 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
+        if (!ConnectivityUtils.isNetworkAvailable(getApplicationContext())) {
+            Toast.makeText(this, "You are on offline mode", Toast.LENGTH_SHORT).show();
+            Intent offlineModeIntent = new Intent(this, MainActivity.class);
+            startActivity(offlineModeIntent);
+        }
+
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_auht);
+
 
 
     }
